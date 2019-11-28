@@ -1,25 +1,42 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-
 if(process.env.NODE_ENV === 'development') {
   require("dotenv").config();
  }
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var testRouter =  require('./routes/tests');
+ //consolidate for using more than one view engine
+const engines = require('consolidate');
+const createError = require('http-errors');
+const express = require('express');
+const expressLayouts = require('express-ejs-layouts');
+const path = require('path');
+const passport = require('passport');
+const flash = require('connect-flash');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const testRouter =  require('./routes/tests');
 
 
-var app = express();
+const app = express();
 
+// Express session
+app.use(
+  session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+  })
+);
 
-
+// Passport Config
+require('./config/passport')(passport);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.use(expressLayouts);
+app.engine('jade', engines.jade);
+app.engine('ejs', engines.ejs);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -30,6 +47,35 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/tests', testRouter);
+
+// EJS
+app.use(expressLayouts);
+app.set('view engine', 'ejs');
+
+// Express body parser
+app.use(express.urlencoded({ extended: true }));
+
+
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Connect flash
+app.use(flash());
+
+// Global variables
+app.use(function(req, res, next) {
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
+  res.locals.error = req.flash('error');
+  next();
+});
+
+// Routes
+// app.use('/', require('./routes/index.js'));
+// app.use('/users', require('./routes/users.js'));
+
 
 
 // catch 404 and forward to error handler
