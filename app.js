@@ -13,8 +13,9 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const socket = require('socket.io');
 const app = express();
+const http = require('http');
+const socket = require('socket.io');
 //app.set('io', io);
 
 const indexRouter = require('./routes/index');
@@ -83,17 +84,34 @@ app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
-
     // render the error page
     res.status(err.status || 500);
     res.render('error');
 });
-
 //Socket set up
+//change socket(3000) to socket(server)
+const server = http.createServer(app);
+//socket set up
+const io = socket(server);
+io.on("connection", (socket) => {
 
+    console.log('made socket connection', socket.id);
 
+    socket.on('register', function(data){
+        register(data);
+    })
+    // Handle chat event
+    // socket.on('chat', function(data){
+    //   // console.log(data);
+    //   io.sockets.emit('chat', data);
+    // });
 
+    // Handle typing event
+    // socket.on('typing', function(data){
+    //   socket.broadcast.emit('typing', data);
+    // });
 
+});
 
 module.exports = app;
 

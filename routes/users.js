@@ -3,6 +3,9 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const db = require('../db/index')
+const User = require('../migrations/Users')
+const Sequelize = require('sequelize');
+
 
 // Login Page
 router.get('/login', (req, res) =>{
@@ -13,7 +16,7 @@ router.get('/login', (req, res) =>{
 router.get('/register', (req, res) =>{
   res.render('register')
 } )
-
+var queryString = "INSERT INTO Users ( password, username,email) VALUES (request.body.password, request.body.username,request.body.email)";
 router.post('/register', (request, response) =>{
   const {username,email,password,password2} = request.body;
   let errors = [];
@@ -27,25 +30,21 @@ router.post('/register', (request, response) =>{
   if (password.length < 6) {
     errors.push({ msg: 'Password must be at least 6 characters' });
   }
-  console.log(request.body)
-        bcrypt.genSalt(10, (err, salt) => {
-          bcrypt.hash(password, salt, (err, hash) => {
-            if (err) throw err;
-            let passWord = hash;
-            console.log(hash);
-              db.one('INSERT INTO users_table (username, email, password) VALUES(username, email, password)', {
-                  username:username,
-                  email:email,
-                  password: passWord
-              })
-                  .then(res => {
-                  req.flash('success_msg', 'You are now registered and can log in');
-                  res.redirect('/users/login');
-                })
-                .catch(err => console.log(err));
-          });
+  console.log(queryString)
+    if(errors.length > 0) {
+        res.render('register', {
+            errors,
+            username,
+            email
         });
-    });
+    }else{
+        db.query(queryString,(errors,res) => {
+            console.log(errors,res)
+            db.end()
+        });
+    }
+});
+
 
 // Login
 router.post('/login', (req, res, next) => {
@@ -57,4 +56,33 @@ router.post('/login', (req, res, next) => {
 });
 
 
-module.exports = router;
+module.exports =router;
+
+
+
+// User.findOne({
+//     where:{
+//         username: username
+//     }
+// })
+//     .then(user => {
+//         if (user != undefined) {
+//             console.log("User taken")
+//         } else {
+//             bcrypt.hash(request.body.password, salt, (err, hash) => {
+//                 if (err) throw err;
+//                 let passWord = hash;
+//                 User.create({
+//                     username: username,
+//                     email: email,
+//                     password: passWord
+//                 })
+//             })
+//                 .then(() => {
+//                     console.log("Created user")
+//                 })
+//         }
+//     })
+//     .catch(err =>{
+//         console.log(err)
+//     })

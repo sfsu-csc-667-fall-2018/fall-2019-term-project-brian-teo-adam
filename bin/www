@@ -7,8 +7,6 @@
 const app = require('../app');
 const debug = require('debug')('uno667:server');
 const http = require('http');
-const socketIO = require('socket.io');
-const io = require('socket.io')(server);
 
 /**
  * Get port from environment and store in Express.
@@ -23,11 +21,6 @@ app.set('port', port);
 
 const server = http.createServer(app);
 
-
-io.on('connection', socket =>{
-  console.log("Socket connected")
-  console.log("new connection made")
-})
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -94,3 +87,5 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+module.exports = server
