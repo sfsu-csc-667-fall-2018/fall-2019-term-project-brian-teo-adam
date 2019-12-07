@@ -1,7 +1,7 @@
-if(process.env.NODE_ENV === 'development') {
-  require("dotenv").config();
- }
- //consolidate for using more than one view engine
+if (process.env.NODE_ENV === 'development') {
+    require("dotenv").config();
+}
+//consolidate for using more than one view engine
 const engines = require('consolidate');
 const createError = require('http-errors');
 const express = require('express');
@@ -13,20 +13,28 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
+const bodyParser = require('body-parser');
+const passport = require('passport');
+const localStrategy = require('passport-local').Strategy;
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const db = require('./db/index');
+
+
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const testRouter =  require('./routes/tests');
+const testRouter = require('./routes/tests');
 
-
+app.set('io', io);
 const app = express();
 
 // Express session
 app.use(
-  session({
-    secret: 'secret',
-    resave: true,
-    saveUninitialized: true
-  })
+    session({
+        secret: 'secret',
+        resave: true,
+        saveUninitialized: true
+    })
 );
 
 // Passport Config
@@ -39,11 +47,13 @@ app.engine('jade', engines.jade);
 app.engine('ejs', engines.ejs);
 
 app.use(logger('dev'));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const indexRouter = require('./routes/index')(io, db);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/tests', testRouter);
@@ -53,8 +63,7 @@ app.use(expressLayouts);
 app.set('view engine', 'ejs');
 
 // Express body parser
-app.use(express.urlencoded({ extended: true }));
-
+app.use(express.urlencoded({extended: true}));
 
 
 // Passport middleware
@@ -65,33 +74,27 @@ app.use(passport.session());
 app.use(flash());
 
 // Global variables
-app.use(function(req, res, next) {
-  res.locals.success_msg = req.flash('success_msg');
-  res.locals.error_msg = req.flash('error_msg');
-  res.locals.error = req.flash('error');
-  next();
+app.use(function (req, res, next) {
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    res.locals.error = req.flash('error');
+    next();
 });
 
-// Routes
-// app.use('/', require('./routes/index.js'));
-// app.use('/users', require('./routes/users.js'));
-
-
-
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use(function (req, res, next) {
+    next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 module.exports = app;
