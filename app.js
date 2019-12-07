@@ -7,26 +7,19 @@ const createError = require('http-errors');
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
-const passport = require('passport');
 const flash = require('connect-flash');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const localStrategy = require('passport-local').Strategy;
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
-const db = require('./db/index');
-
+const socket = require('socket.io');
+const app = express();
+//app.set('io', io);
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const testRouter = require('./routes/tests');
-
-app.set('io', io);
-const app = express();
 
 // Express session
 app.use(
@@ -53,7 +46,6 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const indexRouter = require('./routes/index')(io, db);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/tests', testRouter);
@@ -96,6 +88,12 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+//Socket set up
+
+
+
+
 
 module.exports = app;
 
