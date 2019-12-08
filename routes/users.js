@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const passport = require('passport');
-const db = require('../db/index')
-const User = require('../migrations/Users')
-const Sequelize = require('sequelize');
 
+const passport = require('../config/passport');
+const User = require('../db/users');
+
+const { ensureAuthenticated, forwardAuthenticated } = require('../config/auth');
 
 // Login Page
 router.get('/login', (req, res) =>{
@@ -15,14 +14,15 @@ router.get('/login', (req, res) =>{
 // Register Page
 router.get('/register', (req, res) =>{
   res.render('register')
-} )
-var queryString = "INSERT INTO Users ( password, username,email) VALUES (request.body.password, request.body.username,request.body.email)";
+})
+
 router.post('/register', (request, response) =>{
   const {username,email,password,password2} = request.body;
   let errors = [];
-
-  if (!username || !email || !password || !password2) {
+  
+  if (!username || !email || !password) {
     errors.push({ msg: 'Please enter all fields' });
+    req.flash('error_msg', 'all fields are required')
   }
   if (password != password2) {
     errors.push({ msg: 'Passwords do not match' });
@@ -30,24 +30,38 @@ router.post('/register', (request, response) =>{
   if (password.length < 6) {
     errors.push({ msg: 'Password must be at least 6 characters' });
   }
-  console.log(queryString)
-    if(errors.length > 0) {
-        res.render('register', {
-            errors,
-            username,
-            email
+  User.findByEmail(email)
+    .then(User => {
+      if (User.length !== 0) {
+        response.redirect('/dashboard');
+        throw new Error('A user is already registered with that email address');
+      }
+    })
+    .then(() => {
+      console.log(password)
+      console.log(username)
+      console.log(email)
+      
+      return User.create( password,username,email);
+    })
+    .then(user => {
+      request.login(request.body, error => {
+        if (error) {
+          throw error;
+        }
+        request.session.save(() => {
+          response.redirect('/homepage');
         });
-    }else{
-        db.query(queryString,(errors,res) => {
-            console.log(errors,res)
-            db.end()
-        });
-    }
+      });
+    })
+    .catch(function(err) {
+      response.json({ error: err.message });
+    });
 });
-
 
 // Login
 router.post('/login', (req, res, next) => {
+  console.log(req.body);
   passport.authenticate('local', {
     successRedirect: '/dashboard',
     failureRedirect: '/users/login',
@@ -55,34 +69,11 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
+// Logout
+router.get('/logout', (req, res) => {
+  req.logout();
+  req.flash('success_msg', 'You are logged out');
+  res.redirect('/users/login');
+});
 
 module.exports =router;
-
-
-
-// User.findOne({
-//     where:{
-//         username: username
-//     }
-// })
-//     .then(user => {
-//         if (user != undefined) {
-//             console.log("User taken")
-//         } else {
-//             bcrypt.hash(request.body.password, salt, (err, hash) => {
-//                 if (err) throw err;
-//                 let passWord = hash;
-//                 User.create({
-//                     username: username,
-//                     email: email,
-//                     password: passWord
-//                 })
-//             })
-//                 .then(() => {
-//                     console.log("Created user")
-//                 })
-//         }
-//     })
-//     .catch(err =>{
-//         console.log(err)
-//     })

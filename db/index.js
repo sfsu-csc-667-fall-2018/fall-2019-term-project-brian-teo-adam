@@ -1,3 +1,7 @@
-const pgp = require('pg-promise')();
-const connection = pgp(process.env.DATABASE_URL);
-module.exports = connection;
+const Users = require('./users'); 
+
+module.exports = {
+    Users
+}; 
+
+const Db = require('../db')
