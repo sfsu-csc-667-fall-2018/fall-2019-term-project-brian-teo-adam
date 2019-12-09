@@ -1,4 +1,5 @@
 const bycrypt = require('bcryptjs');
+
 const db = require('../connection'); 
 
 
@@ -7,7 +8,6 @@ const CREATE_SQL =
 
 const create = ( password,username,email ) => {
     const hash = bycrypt.hashSync(password, 10)
-    console.log(hash)
     return db.one(CREATE_SQL,[hash,username,email]);
 };
 

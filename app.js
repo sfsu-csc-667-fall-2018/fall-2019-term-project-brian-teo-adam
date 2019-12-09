@@ -12,9 +12,8 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
-const passport = require('passport');
-
-
+const passport = require('./auth')
+const socketIo = require('./socket')
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const testRouter = require('./routes/tests');
@@ -30,14 +29,21 @@ app.use(
     })
 );
 
-// Passport Config
-//require('./config/passport')(passport);
+
+// socketIo.on('connection', socket =>{
+//     socket.emit('chat-message', 'Hello World')
+// })
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
-app.engine('jade', engines.jade);
 app.engine('ejs', engines.ejs);
+app.engine('jade', engines.jade);
+
 
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -51,16 +57,12 @@ app.use('/users', usersRouter);
 app.use('/tests', testRouter);
 
 // EJS
-app.use(expressLayouts);
+// app.use(expressLayouts);
+app.set('view engine', 'jade');
 app.set('view engine', 'ejs');
 
 // Express body parser
 app.use(express.urlencoded({extended: true}));
-
-
-// Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Connect flash
 app.use(flash());
@@ -85,9 +87,10 @@ app.use(function (err, req, res, next) {
     res.locals.error = req.app.get('env') === 'development' ? err : {};
     // render the error page
     res.status(err.status || 500);
-    res.render('/views/error');
+    console.log(err.status)
+    console.log(" ");
+    console.log(err.message)
+    res.render('error.jade');
 });
 
 module.exports = app;
-
-
