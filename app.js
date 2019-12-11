@@ -12,8 +12,10 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+
 const passport = require('./auth')
 const socketIo = require('./socket')
+
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const testRouter = require('./routes/tests');
@@ -29,11 +31,6 @@ app.use(
     })
 );
 
-
-// socketIo.on('connection', socket =>{
-//     socket.emit('chat-message', 'Hello World')
-// })
-
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
@@ -43,7 +40,6 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
 app.engine('ejs', engines.ejs);
 app.engine('jade', engines.jade);
-
 
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: true}));

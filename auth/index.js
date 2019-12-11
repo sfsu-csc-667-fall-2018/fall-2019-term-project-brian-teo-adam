@@ -5,13 +5,12 @@ const bcrypt = require('bcrypt');
 const User = require('../db/users/index');
 
 passport.serializeUser((user, done) => {
-  console.log("user--email",user.id)
+  
   done(null, user.id);
 });
 
 passport.deserializeUser((id, done) => {
   User.findById(id).then(({ id, email, username }) => done(null, { id, email, username}));
-  console.log("user@passport deser: ", User)
 });
 
 const strategy = new LocalStrategy(

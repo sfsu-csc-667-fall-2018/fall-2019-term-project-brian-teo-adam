@@ -55,12 +55,8 @@ router.post('/register', (request, response) =>{
 });
 
 router.post('/createGame',(request,response) =>{
-  console.log("request.body", request.body);
-  console.log("userinfo",request.user)
   response.render('homepage');
 })
-
-
 
 // Login
 router.post('/login', (request, response, next) => {

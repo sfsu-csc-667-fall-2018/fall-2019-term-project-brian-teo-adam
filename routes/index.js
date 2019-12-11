@@ -7,6 +7,9 @@ const { ensureAuthenticated, forwardAuthenticated } = require('../auth/middlewar
 router.get('/', function(req, res, next) {
   res.render('homepage');
 });
+router.get('/lobby', function(req, res, next) {
+  res.render('lobby');
+});
 
 // dashboard Page
 router.get('/dashboard', ensureAuthenticated, (request, response) =>{
