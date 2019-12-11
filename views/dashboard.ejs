@@ -1,3 +1,41 @@
-<h1 class="mt-4">Dashboard</h1>
+<h2 class="mt-4">Dashboard</h2>
 <p class="lead mb-3">Welcome <%=username%></p>
+
+<body>
+    <div>
+        <form action="/users/createGame" method="POST">
+            <div class="form-group">
+              <label for="numberOfPlayers">Number of players</label>
+              <input
+                type="numberOfPlayers"
+                id="numberOfPlayers"
+                name="numberOfPlayers"
+                class="form-control"
+                placeholder="Enter numberOfPlayers"
+              />
+            </div>
+            <div class="form-group">
+              <label for="gameType">Game Type </label>
+              <input
+                type="gameType"
+                id="gameType"
+                name="gameType"
+                class="form-control"
+                placeholder="Game Type"
+              />
+            </div>
+            <div class="form-group">
+                <label for="backgroundImg">Game Type </label>
+                <input
+                  type="backgroundImg"
+                  id="backgroundImg"
+                  name="backgroundImg"
+                  class="form-control"
+                  placeholder="Backgroud Image"
+                />
+              </div>
+            <button type="submit" class="btn btn-primary btn-block">Create</button>
+          </form>
+    </div>
+</body>
 <a href="/users/logout" class="btn btn-secondary">Logout</a>

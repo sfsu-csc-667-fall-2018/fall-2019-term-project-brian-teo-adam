@@ -2,6 +2,7 @@ module.exports = {
 
     ensureAuthenticated: function(request, response, next) {
       if (request.isAuthenticated()) {
+        console.log("next::::: ", request)
         return next();
       }
       //req.flash('error_msg', 'Please log in to view that resource');

@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
 });
 
 // dashboard Page
-router.get('/dashboard', (request, response) =>{
+router.get('/dashboard', ensureAuthenticated, (request, response) =>{
   response.render('dashboard',{
     username: request.user.email
   })

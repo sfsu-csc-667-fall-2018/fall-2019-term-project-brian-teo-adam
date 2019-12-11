@@ -36,7 +36,8 @@ router.post('/register', (request, response) =>{
       }
     })
     .then(() => {
-      return User.create( password,username,email);
+      console.log("user @users" , User);
+      return User.create(password,username,email);
     })
     .then(user => {
       request.login(request.body, error => {
@@ -44,7 +45,7 @@ router.post('/register', (request, response) =>{
           throw error;
         }
         request.session.save(() => {
-          response.redirect('/users/dashboard');
+          response.redirect('/users/login');
         });
       });
     })
@@ -52,6 +53,14 @@ router.post('/register', (request, response) =>{
       response.json({ error: err.message });
     });
 });
+
+router.post('/createGame',(request,response) =>{
+  console.log("request.body", request.body);
+  console.log("userinfo",request.user)
+  response.render('homepage');
+})
+
+
 
 // Login
 router.post('/login', (request, response, next) => {
@@ -61,9 +70,6 @@ router.post('/login', (request, response, next) => {
     failureFlash: true
   })(request, response, next);
 });
-
-
-
 
 // Logout
 router.get('/logout', (request, response) => {

@@ -8,6 +8,7 @@ const CREATE_SQL =
 
 const create = ( password,username,email ) => {
     const hash = bycrypt.hashSync(password, 10)
+    console.log(username," ::::",password, ":::", email)
     return db.one(CREATE_SQL,[hash,username,email]);
 };
 
