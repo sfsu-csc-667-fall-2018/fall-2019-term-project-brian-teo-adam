@@ -9,7 +9,7 @@ module.exports =  class gameCardsPlayed extends UnoPileOfCards { //Do not have e
     super();
   }
 
-  receiveKPlayedCards(playedCards) { //Where do all these come from?
+  receiveKPlayedCards(playedCards) { //Where do all these come from? I think comes from gamePlayer
     this.insertCards(playedCards);
   }
 
