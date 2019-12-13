@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('users', {
+    return queryInterface.createTable('users_', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -30,8 +30,16 @@ module.exports = {
       }
     });
   },
+  
+
   down: (queryInterface, Sequelize) => {
+    return queryInterface.dropTable('users_');
+    /*
+      Add reverting commands here.
+      Return a promise to correctly handle asynchronicity.
+
+      Example:
       return queryInterface.dropTable('users');
+    */
   }
 };
-

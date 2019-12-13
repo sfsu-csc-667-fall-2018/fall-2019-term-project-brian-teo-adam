@@ -2,26 +2,34 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('users', {
+    return queryInterface.createTable('games', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      password: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      username: {
+      name: {
         allowNull: false,
         type: Sequelize.STRING,
         unique: true
       },
-      email: {
+      started: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      owner_id:{
         allowNull: false,
-        type: Sequelize.STRING,
-        unique: true
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
+      },
+      number_players: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
@@ -31,7 +39,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-      return queryInterface.dropTable('users');
+    return queryInterface.dropTable('games');
   }
 };
-

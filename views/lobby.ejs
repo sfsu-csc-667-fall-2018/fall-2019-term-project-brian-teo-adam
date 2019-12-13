@@ -12,14 +12,19 @@
         #messages li { padding: 5px 10px; }
         #messages li:nth-child(odd) { background: #eee; }
     </style>
-    <script src="../../socket.io/socket.io.js"></script>
+    <<script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script defer src="../public/stylesheets/script/script.js"></script>
+    <!-- <script src="../../socket.io/socket.io.js"></script> -->
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
   </head>
   <body>
-    <ul id="messages"></ul>
-    <form action="/" method="POST" id="chatForm">
+    <div id="message-container"></div>
+    <!-- <form action="/" method="POST" id="chatForm"> -->
+      <form id="send-container">
+        <input type="text" id="message-input"> 
       <input id="txt" autocomplete="off" autofocus="on" placeholder="type your message here..." />
-      <button>Send</button>
+      <button type="submit" id="send-button">Send</button>
+      </form>
     </form>
     <!-- <script>
         // submit text message without reload/refresh the page
@@ -29,8 +34,9 @@
             return false;
         });
     </script> -->
-    <script>
+    <!-- <script>
             var socket = io.connect('http://localhost:3000');
+
             // submit text message without reload/refresh the page
             $('form').submit(function(e){
                 e.preventDefault(); // prevents page reloading
@@ -44,11 +50,14 @@
             });
             // append text if someone is online
             socket.on('is_online', function(username) {
+              console.log("frontend ", username)
                 $('#messages').append($('<li>').html(username));
             });
             // ask username
             var username = prompt('Please tell me your name');
+            console.log(username)
             socket.emit('username', username);
-    </script>
+
+    </script> -->
   </body>
 </html>

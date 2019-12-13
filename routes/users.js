@@ -36,16 +36,18 @@ router.post('/register', (request, response) =>{
       }
     })
     .then(() => {
-      console.log("user @users" , User);
+      console.log("1" );
       return User.create(password,username,email);
     })
     .then(user => {
       request.login(request.body, error => {
+        console.log("2");
         if (error) {
           throw error;
         }
         request.session.save(() => {
-          response.redirect('/users/login');
+          console.log("3")
+          response.redirect('/users/dashboard');
         });
       });
     })
@@ -54,10 +56,6 @@ router.post('/register', (request, response) =>{
     });
 });
 
-router.post('/createGame',(request,response) =>{
-  response.render('homepage');
-})
-
 // Login
 router.post('/login', (request, response, next) => {
   passport.authenticate('local', {
@@ -65,6 +63,13 @@ router.post('/login', (request, response, next) => {
     failureRedirect: '/users/login',
     failureFlash: true
   })(request, response, next);
+});
+// dashboard Page
+router.get('/dashboard', (request, response) =>{
+  response.render('dashboard',{
+    username: request.user.email
+  })
+  console.log(request.user)
 });
 
 // Logout
