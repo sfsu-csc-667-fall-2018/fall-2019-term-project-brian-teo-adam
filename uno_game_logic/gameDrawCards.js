@@ -3,7 +3,9 @@
 let UnoDeck = require('./UnoDeck');
 */
 
-module.exports = class gameDrawCards extends gameDeck {  //Don't have UnoDrawCardsPile or UnoDeck 
+
+module.exports = class gameDrawCards extends gameDeck { 
+
     constructor() {
         super();
         this.deckArray = [];
