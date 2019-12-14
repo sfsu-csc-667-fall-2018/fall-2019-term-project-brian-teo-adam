@@ -8,11 +8,16 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      name: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        unique: true
+      },
       started: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },
-      created_By:{
+      owner_id:{
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
@@ -26,11 +31,6 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       createdAt: {
-        allowNull: false,
-        defaultValue: new Date(),
-        type: Sequelize.DATE
-      },
-      updatedAt: {
         allowNull: false,
         defaultValue: new Date(),
         type: Sequelize.DATE

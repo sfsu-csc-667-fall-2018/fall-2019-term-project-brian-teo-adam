@@ -2,26 +2,34 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('users_', {
+    return queryInterface.createTable('deck', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      password: {
+      game_id: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'games',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       },
-      username: {
+      card_id: {
         allowNull: false,
-        type: Sequelize.STRING,
-        unique: true
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'cards',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       },
-      email: {
+      index: {
         allowNull: false,
-        type: Sequelize.STRING,
-        unique: true
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -30,16 +38,7 @@ module.exports = {
       }
     });
   },
-  
-
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('users_');
-    /*
-      Add reverting commands here.
-      Return a promise to correctly handle asynchronicity.
-
-      Example:
-      return queryInterface.dropTable('users');
-    */
+    return queryInterface.dropTable('decks');
   }
 };

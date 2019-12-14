@@ -1,5 +1,6 @@
+<!DOCTYPE html>
 <html>
-<head>
+<!-- <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body {font-family: Arial, Helvetica, sans-serif;}
@@ -75,56 +76,46 @@ body {font-family: Arial, Helvetica, sans-serif;}
   opacity: 1;
 }
 </style>
-<script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
-<script defer src="../public/stylesheets/script/script.js"></script>
-</head>
+
+</head> -->
 
 <body>
-     <h2 class="mt-4">Dashboard</h2>
+    <h2 class="mt-4">Dashboard</h2>
     <p class="lead mb-3">Welcome <%=username%></p>
     <div class="row mt-7">
-        <div class="col-md-7 m-auto">
-            <div class="card card-body text-left">
-        <form action="/users/createGame" method="POST">
+      <div class="col-md-7 m-auto">
+        <div class="card card-body text-left">
+          <form id="create-game-form" action="">
             <div class="form-group">
-              <label for="numberOfPlayers">Number of players</label>
+              <label for="gameName">Game Name</label>
               <input
-                type="numberOfPlayers"
-                id="numberOfPlayers"
-                name="numberOfPlayers"
+                type="gameName"
+                id="gameName"
+                name="gameName"
                 class="form-control"
-                placeholder="Enter numberOfPlayers"
+                placeholder="Enter Game Name"
               />
             </div>
             <div class="form-group">
-              <label for="gameType">Game Type </label>
+              <label for="numberPlayers">Number of Players </label>
               <input
-                type="gameType"
-                id="gameType"
-                name="gameType"
+                type="numberPlayers"
+                id="numberPlayers"
+                name="numberPlayers"
                 class="form-control"
-                placeholder="Game Type"
+                placeholder="Number of players"
               />
             </div>
-            <div class="form-group">
-                <label for="backgroundImg">Game Type </label>
-                <input
-                  type="backgroundImg"
-                  id="backgroundImg"
-                  name="backgroundImg"
-                  class="form-control"
-                  placeholder="Backgroud Image"
-                />
-              </div>
+            
             <button type="submit" class="btn btn-primary btn-block">Create</button>
           </form>
     </div>
 </div>
 </div>
 
-<button class="open-button" onclick="openForm()">Chat</button>
+<!-- <button class="open-button" onclick="openForm()">Chat</button> -->
 
-<div class="chat-popup" id="myForm">
+<!-- <div class="chat-popup" id="myForm">
   <form action="/action_page.php" class="form-container">
     <h1>Chat</h1>
 
@@ -134,9 +125,9 @@ body {font-family: Arial, Helvetica, sans-serif;}
     <button type="submit" class="btn">Send</button>
     <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
   </form>
-</div>
+</div> -->
 
-<script>
+<!-- <script>
 function openForm() {
   document.getElementById("myForm").style.display = "block";
 }
@@ -144,8 +135,14 @@ function openForm() {
 function closeForm() {
   document.getElementById("myForm").style.display = "none";
 }
-</script>
+</script> -->
 
+<form action="/index/room" method="POST">
+  <input name="room" type="text" required>
+  <button type="submit">New Room</button>
+</form>
+<script defer src="/socket.io/socket.io.js"></script>
+<script defer src="/public/script.js"></script>
 </body>
 <a href="/users/logout" class="btn btn-secondary">Logout</a>
 <a href="/lobby" class="btn btn-secondary">Lobby</a>

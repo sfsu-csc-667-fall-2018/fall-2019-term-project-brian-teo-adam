@@ -5,9 +5,7 @@ const passport = require('../auth');
 const User = require('../db/users');
 
 
-const rooms = { }
-
-app.post('/room', (req, res) => {
+router.post('/room', (req, res) => {
     if (rooms[req.body.room] != null) {
       return res.redirect('/')
     }
@@ -17,11 +15,12 @@ app.post('/room', (req, res) => {
     io.emit('room-created', req.body.room)
   })
 
-  app.get('/:room', (req, res) => {
+  router.get('/:room', (req, res) => {
     if (rooms[req.params.room] == null) {
       return res.redirect('/')
     }
+    //change req.params.room to get game id
     res.render('room', { roomName: req.params.room })
   })
-  
-  server.listen(3000)
+
+  module.exports = router; 

@@ -2,23 +2,22 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('games', {
+    return queryInterface.createTable('user_cards', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
+      game_id: {
         allowNull: false,
-        type: Sequelize.STRING,
-        unique: true
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'games',
+          key: 'id'
+        }
       },
-      started: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
-      },
-      owner_id:{
+      user_id: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
@@ -27,9 +26,14 @@ module.exports = {
         },
         onDelete: 'CASCADE'
       },
-      number_players: {
+      card_id: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        references: {
+          model: 'cards',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
@@ -39,6 +43,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('games');
+    return queryInterface.dropTable('user_cards');
   }
 };

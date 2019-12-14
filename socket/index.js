@@ -1,17 +1,16 @@
 const socketIo = require( 'socket.io' )
 //const { USER_JOINED, MESSAGE_SEND } = require( '../src/constants/events' )
 const USER_JOINED = 'user-joined';
-// const messageContainer = document.getElementById('message-container')
-// const messageForm = document.getElementById('send-container')
-// const messageInput = document.getElementById('message-input')
 
 
 const init = ( app, server ) => {
-  const io = socketIo( server )
+  const io = socketIo( server );
 
   app.set( 'io', io )
 
   io.on('connection', socket => {
+    console.log("connection on socket")
+    //console.log(socket)
     socket.on('new-user', (room, name) => {
       socket.join(room)
       rooms[room].users[socket.id] = name
@@ -20,12 +19,29 @@ const init = ( app, server ) => {
     socket.on('send-chat-message', (room, message) => {
       socket.to(room).broadcast.emit('chat-message', { message: message, name: rooms[room].users[socket.id] })
     })
-    socket.on('disconnect', () => {
-      getUserRooms(socket).forEach(room => {
-        socket.to(room).broadcast.emit('user-disconnected', rooms[room].users[socket.id])
-        delete rooms[room].users[socket.id]
-      })
+
+    socket.on('new-game', (message) => {
+      
     })
+
+    socket.on('game-move', (message) => {
+      const {
+        gameType,
+        gameId,
+        userId,
+        moveType,
+        cardData,
+      } = message;
+
+      io.to(`${gameType}:${gameId}`).broadcast.emit('game-message', { message: message, })
+    })
+
+    // socket.on('disconnect', () => {
+    // //  getUserRooms(socket).forEach(room => {
+    //     socket.to(room).broadcast.emit('user-disconnected', rooms[room].users[socket.id])
+    //     delete rooms[room].users[socket.id]
+    //   })
+    // })
   })
 
   function getUserRooms(socket) {

@@ -19,15 +19,20 @@ const socketIo = require('./socket')
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const testRouter = require('./routes/tests');
+const roomsRouter =require('./routes/chat-rooms')
 
 const app = express();
 
 // Express session
 app.use(
     session({
+        key: 'user_sid',
         secret: 'secret',
-        resave: true,
-        saveUninitialized: true
+        resave: false,
+        saveUninitialized: false,
+        cookie:{
+            expires:600000
+        }
     })
 );
 
@@ -46,11 +51,12 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use("/public",express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/tests', testRouter);
+app.use('/room', roomsRouter)
 
 // EJS
 // app.use(expressLayouts);

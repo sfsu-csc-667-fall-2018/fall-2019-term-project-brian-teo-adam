@@ -3,6 +3,7 @@ const router = express.Router();
 
 const passport = require('../auth');
 const User = require('../db/users');
+const Games = require('../db/games');
 
 // Login Page
 router.get('/login', (request, response) =>{
@@ -36,18 +37,15 @@ router.post('/register', (request, response) =>{
       }
     })
     .then(() => {
-      console.log("1" );
       return User.create(password,username,email);
     })
     .then(user => {
       request.login(request.body, error => {
-        console.log("2");
         if (error) {
           throw error;
         }
         request.session.save(() => {
-          console.log("3")
-          response.redirect('/users/dashboard');
+          response.redirect('/dashboard');
         });
       });
     })
@@ -64,13 +62,6 @@ router.post('/login', (request, response, next) => {
     failureFlash: true
   })(request, response, next);
 });
-// dashboard Page
-router.get('/dashboard', (request, response) =>{
-  response.render('dashboard',{
-    username: request.user.email
-  })
-  console.log(request.user)
-});
 
 // Logout
 router.get('/logout', (request, response) => {
@@ -79,4 +70,19 @@ router.get('/logout', (request, response) => {
   response.redirect('/users/login');
 });
 
+router.post('/createGame', async (request,response) =>{
+  console.log(request.body)
+  // const {
+  //   id: userId
+  // } = request.session.passport;
+  const userId = request.session.passport.user;
+  const {
+      gameName,
+      numberPlayers,
+  } = request.body;
+  const gameId = await Games.create(gameName,userId,numberPlayers);
+  console.log(gameId)
+  response.json({ gameId,gameName,userId });
+  //response.render('homepage');
+})
 module.exports =router;
