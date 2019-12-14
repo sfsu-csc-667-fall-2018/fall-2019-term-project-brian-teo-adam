@@ -36,14 +36,17 @@ router.post('/register', (request, response) =>{
       }
     })
     .then(() => {
-      return User.create( password,username,email);
+      console.log("1" );
+      return User.create(password,username,email);
     })
     .then(user => {
       request.login(request.body, error => {
+        console.log("2");
         if (error) {
           throw error;
         }
         request.session.save(() => {
+          console.log("3")
           response.redirect('/users/dashboard');
         });
       });
@@ -61,9 +64,13 @@ router.post('/login', (request, response, next) => {
     failureFlash: true
   })(request, response, next);
 });
-
-
-
+// dashboard Page
+router.get('/dashboard', (request, response) =>{
+  response.render('dashboard',{
+    username: request.user.email
+  })
+  console.log(request.user)
+});
 
 // Logout
 router.get('/logout', (request, response) => {

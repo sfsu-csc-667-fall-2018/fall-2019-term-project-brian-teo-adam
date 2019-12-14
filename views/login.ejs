@@ -1,5 +1,10 @@
 <div class="row mt-5">
-        <div class="col-md-6 m-auto">
+  <script>src='https://code.jquery.com/jquery-3.1.1.min.js', integrity='sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=', crossorigin='anonymous'</script>
+  <script>src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', integrity='sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa', crossorigin='anonymous'</script>     
+  <script>src='https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.5.3/jquery.timeago.min.js'</script>
+  <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
+  <script defer src="socket/index.js"></script>
+  <div class="col-md-6 m-auto">
           <div class="card card-body">
             <h1 class="text-center mb-3"><i class="fas fa-sign-in-alt"></i>  Login</h1>
             <form action="/users/login" method="POST">
@@ -28,6 +33,11 @@
             <p class="lead mt-4">
               No Account? <a href="/users/register">Register</a>
             </p>
+
+            <script>
+              src='/socket.io/socket.io.js'
+            </script>
+            
           </div>
         </div>
       </div>

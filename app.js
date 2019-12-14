@@ -57,7 +57,7 @@ app.use('/users', usersRouter);
 app.use('/tests', testRouter);
 
 // EJS
-// app.use(expressLayouts);
+app.use(expressLayouts);
 app.set('view engine', 'jade');
 app.set('view engine', 'ejs');
 
