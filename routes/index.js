@@ -7,7 +7,7 @@ const rooms ={};
 //rooms:0 is lobby messages
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('homepage');
+  res.render('homepage', {rooms:rooms});
 });
 
 router.get('/lobby', function(req, res, next) {
@@ -17,7 +17,7 @@ router.get('/lobby', function(req, res, next) {
 // dashboard Page
 router.get('/dashboard', ensureAuthenticated, (request, response) =>{
   response.render('dashboard',{
-    username: request.user.email,
+    username: request.user.username,
     userId: request.user.id
   })
   console.log(request.user)
@@ -29,6 +29,7 @@ router.post('/room', (req, res) => {
     }
     rooms[req.body.room] = { users: {} }
     res.redirect(req.body.room)
+    console.log(eq.body.room)
     // Send message that new room was created
     io.emit('room-created', req.body.room)
   })

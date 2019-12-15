@@ -1,25 +1,24 @@
 const socketIo = require( 'socket.io' )
-//const { USER_JOINED, MESSAGE_SEND } = require( '../src/constants/events' )
-const USER_JOINED = 'user-joined';
-
-
 const init = ( app, server ) => {
-  const io = socketIo( server );
-
-  app.set( 'io', io )
-
-  io.on('connection', socket => {
-    console.log("connection on socket")
-    //console.log(socket)
-    socket.on('new-user', (room, name) => {
-      socket.join(room)
-      rooms[room].users[socket.id] = name
-      socket.to(room).broadcast.emit('user-connected', name)
-    })
+const io = socketIo( server );
+app.set( 'io', io )
+const rooms = {}
+io.on('connection', socket => {
+  console.log("connection on socket")
+  console.log(socket.request.userId)
+  socket.on('new-user', (room, name) => {
+    socket.join(room)
+    rooms[room].users[socket.id] = name
+    socket.to(room).broadcast.emit('user-connected', name)
+  })
     socket.on('send-chat-message', (room, message) => {
       socket.to(room).broadcast.emit('chat-message', { message: message, name: rooms[room].users[socket.id] })
     })
 
+    socket.on('lobby chat message', (message) => {
+      console.log("lobby message")
+      console.log(message)
+    })
     socket.on('new-game', (message) => {
       
     })
@@ -36,12 +35,12 @@ const init = ( app, server ) => {
       io.to(`${gameType}:${gameId}`).broadcast.emit('game-message', { message: message, })
     })
 
-    // socket.on('disconnect', () => {
-    // //  getUserRooms(socket).forEach(room => {
-    //     socket.to(room).broadcast.emit('user-disconnected', rooms[room].users[socket.id])
-    //     delete rooms[room].users[socket.id]
-    //   })
-    // })
+    socket.on('disconnect', () => {
+      getUserRooms(socket).forEach(room => {
+      socket.to(room).broadcast.emit('user-disconnected', rooms[room].users[socket.id])
+      delete rooms[room].users[socket.id]
+      })
+    })
   })
 
   function getUserRooms(socket) {
@@ -51,36 +50,6 @@ const init = ( app, server ) => {
     }, [])
 }
 }
-//   io.on( 'connection', socket => {
-//     console.log( 'client jjjjjj connected', socket)
-//     io.emit('is_online', '🔵 <i>' + socket.username + ' join the chat..</i>');
-    
-//     socket.on('disconnect', function(username) {
-//       console.log("user disconnect  ",username)
-//       io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat..</i>');
-//     })
-//     socket.on('chat_message', function(message) {
-//       console.log(message)
-//       io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
-//     });
-//      socket.on( USER_JOINED, data => io.emit( USER_JOINED, data ))
-//     // socket.on( MESSAGE_SEND, data => io.emit( MESSAGE_SEND, data ))
-//   })
-// }
-// messageForm.addEventListener('submit', e => {
-//   e.preventDefault()
-//   const message = messageInput.value
-//   appendMessage(`You: ${message}`)
-//   socket.emit('send-chat-message', message)
-//   messageInput.value = ''
-// })
-
-// function appendMessage(message) {
-//   const messageElement = document.createElement('div')
-//   messageElement.innerText = message
-//   messageContainer.append(messageElement)
-// }
-
 
 
 module.exports = { init }

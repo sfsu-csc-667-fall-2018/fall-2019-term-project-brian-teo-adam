@@ -25,6 +25,19 @@ createGame.addEventListener('submit', function ( event ) {
   });
 });
 
+if (messageForm != null) {
+  const name = prompt('What is your name?')
+  appendMessage('You joined')
+  socket.emit('new-user', roomName, name)
+
+  messageForm.addEventListener('submit', e => {
+    e.preventDefault()
+    const message = messageInput.value
+    appendMessage(`You: ${message}`)
+    socket.emit('send-chat-message', roomName, message)
+    messageInput.value = ''
+  })
+}
 socket.on('new-game', function ( message ) { 
   const {
     userId,
@@ -32,9 +45,12 @@ socket.on('new-game', function ( message ) {
     gameId,
   } = message;
 
+  console.log("Script message", message)
+
   if ( userId == localStorage.getItem('userId') ) {
 
     // open game window
+    
   }
   else {
      // render the game advertisement somewhere
@@ -46,6 +62,8 @@ socket.on('game-message', function ( message ) {
 });
 
 socket.on('room-created', room => {
+  console.log("Script, room ceated")
+  console.log("room", room)
   const roomElement = document.createElement('div')
   roomElement.innerText = room
   const roomLink = document.createElement('a')
@@ -73,16 +91,4 @@ socket.on('user-connected', name => {
     messageElement.innerText = message
     messageContainer.append(messageElement)
   }
-  if (messageForm != null) {
-    const name = prompt('What is your name?')
-    appendMessage('You joined')
-    socket.emit('new-user', roomName, name)
   
-    messageForm.addEventListener('submit', e => {
-      e.preventDefault()
-      const message = messageInput.value
-      appendMessage(`You: ${message}`)
-      socket.emit('send-chat-message', roomName, message)
-      messageInput.value = ''
-    })
-  }

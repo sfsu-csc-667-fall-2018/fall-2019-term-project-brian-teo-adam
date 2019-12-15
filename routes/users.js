@@ -4,7 +4,7 @@ const router = express.Router();
 const passport = require('../auth');
 const User = require('../db/users');
 const Games = require('../db/games');
-
+const rooms = { };
 // Login Page
 router.get('/login', (request, response) =>{
   response.render('login')
@@ -72,9 +72,6 @@ router.get('/logout', (request, response) => {
 
 router.post('/createGame', async (request,response) =>{
   console.log(request.body)
-  // const {
-  //   id: userId
-  // } = request.session.passport;
   const userId = request.session.passport.user;
   const {
       gameName,
@@ -83,6 +80,17 @@ router.post('/createGame', async (request,response) =>{
   const gameId = await Games.create(gameName,userId,numberPlayers);
   console.log(gameId)
   response.json({ gameId,gameName,userId });
+  
+  if (rooms[request.body.room] != null) {
+    return res.redirect('/')
+  }
+  rooms[request.body.room] = { users: {} }
+  response.redirect(request.body.room)
+  console.log("users/create ",request.body.room)
+  // Send message that new room was created
+  io.emit('new-game', request.body.room)
+  console.log("Rooms", rooms)
   //response.render('homepage');
 })
 module.exports =router;
+
