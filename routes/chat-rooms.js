@@ -25,13 +25,18 @@ router.post('/room', (req, res) => {
 
   router.post('/createGame', async (request,response) =>{
   console.log(request.body)
+  
   const userId = request.session.passport.user;
+ 
   const {
       gameName,
       numberPlayers,
   } = request.body;
+  
   const gameId = await Games.create(gameName,userId,numberPlayers);
+  
   console.log(gameId)
+  
   response.json({ gameId,gameName,userId });
   
   if (rooms[request.body.room] != null) {
