@@ -7,7 +7,7 @@ const actionDrawTwo = "DrawTwo";
 const actionChooseColor = "ChooseColor";
 const actionDefault = "Default";
 
-module.exports =  class UnoMoveChecker {
+module.exports =  class gameActionCheck {
   constructor() {
     this.cardAtrributes = {};
     this.actionCheck = actionDefault;
