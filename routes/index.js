@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/lobby', function(req, res, next) {
-  res.render('lobby', {rooms: 0});
+  res.render('lobby', {rooms: rooms});
 });
 
 // dashboard Page
@@ -23,23 +23,6 @@ router.get('/dashboard', ensureAuthenticated, (request, response) =>{
   console.log(request.user)
 });
 
-router.post('/room', (req, res) => {
-    if (rooms[req.body.room] != null) {
-      return res.redirect('/')
-    }
-    rooms[req.body.room] = { users: {} }
-    res.redirect(req.body.room)
-    console.log(eq.body.room)
-    // Send message that new room was created
-    io.emit('room-created', req.body.room)
-  })
-  
-  router.get('/:room', (req, res) => {
-    if (rooms[req.params.room] == null) {
-      return res.redirect('/')
-    }
-    //change req.params.room to get game id
-    res.render('room', { roomName: req.params.room })
-  })
+
 
 module.exports = router;

@@ -3,6 +3,8 @@ const init = ( app, server ) => {
 const io = socketIo( server );
 app.set( 'io', io )
 const rooms = {}
+
+
 io.on('connection', socket => {
   console.log("connection on socket")
   console.log(socket.request.userId)

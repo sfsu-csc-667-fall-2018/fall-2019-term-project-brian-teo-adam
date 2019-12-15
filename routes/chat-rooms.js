@@ -23,4 +23,27 @@ router.post('/room', (req, res) => {
     res.render('room', { roomName: req.params.room })
   })
 
+  router.post('/createGame', async (request,response) =>{
+  console.log(request.body)
+  const userId = request.session.passport.user;
+  const {
+      gameName,
+      numberPlayers,
+  } = request.body;
+  const gameId = await Games.create(gameName,userId,numberPlayers);
+  console.log(gameId)
+  response.json({ gameId,gameName,userId });
+  
+  if (rooms[request.body.room] != null) {
+    return res.redirect('/')
+  }
+  rooms[request.body.room] = { users: {} }
+  response.redirect(request.body.room)
+  console.log("users/create ",request.body.room)
+  // Send message that new room was created
+  io.emit('new-game', request.body.room)
+  console.log("Rooms", rooms)
+  //response.render('homepage');
+})
+
   module.exports = router; 
