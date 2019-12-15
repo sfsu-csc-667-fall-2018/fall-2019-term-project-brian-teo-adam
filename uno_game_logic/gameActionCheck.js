@@ -2,8 +2,8 @@ let gameCard = require('./gameCard');
 
 const actionSkipTurn = "SkipTurn"; //These were all capital and had "_" in between each word
 const actionReverseDirection = "ReverseDirection";
-const actionDrawFour = "DrawFour";
 const actionDrawTwo = "DrawTwo";
+const actionWildDrawFour = "DrawFour";
 const actionChooseColor = "ChooseColor";
 const actionDefault = "Default";
 
@@ -56,7 +56,7 @@ module.exports =  class gameActionCheck {
         this.actionCheck = actionDrawTwo;
       }
       else if(actionOfCard[gameCard.cardType] === gameCard.cardWildDrawFour) {
-        this.actionCheck = actionDrawFour;
+        this.actionCheck = actionWildDrawFour;
       }
       else if(actionOfCard[gameCard.cardType] === gameCard.cardWild) {
         this.actionCheck = actionChooseColor;
@@ -88,7 +88,7 @@ module.exports =  class gameActionCheck {
   }
 
   static get MOVE_RESULT_NEXT_PLAYER_DRAW_FOUR() {
-    return actionDrawFour;
+    return actionWildDrawFour;
   }
 
   static get MOVE_RESULT_NEXT_PLAYER_DRAW_TWO() {

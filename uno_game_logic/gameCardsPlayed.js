@@ -1,10 +1,7 @@
-/*
-//gamePlayedCardsPile
-let UnoPileOfCards = require('./UnoPileOfCards'); //don't have these yet
-*/
+let gameCardsStack = require('./gameCardsStack'); //don't have these yet
 
-/*
-module.exports =  class gameCardsPlayed extends UnoPileOfCards { //Do not have extension file yet. 
+
+module.exports =  class gameCardsPlayed extends gameCardsStack { //Do not have extension file yet. 
   constructor() {
     super();
   }
@@ -19,4 +16,3 @@ module.exports =  class gameCardsPlayed extends UnoPileOfCards { //Do not have e
     return this.deckArray[0].getCardAttributes();
   }
 }
-*/
