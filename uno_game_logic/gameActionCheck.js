@@ -1,4 +1,4 @@
-let gameCard = require('./gameCard');
+let gamecards = require('./gamecards');
 
 const actionSkipTurn = "SkipTurn"; //These were all capital and had "_" in between each word
 const actionReverseDirection = "ReverseDirection";
@@ -19,11 +19,11 @@ module.exports =  class gameActionCheck {
   }
 
   checkMoveValidity(action) {
-    let colorOfCard = this.cardAtrributes[gameCard.cardColor];
+    let colorOfCard = this.cardAtrributes[gamecards.cardColor];
     let actionOfCard = action.getCardAttributes();
-    if(colorOfCard === gameCard.colorBlack) {
+    if(colorOfCard === gamecards.colorBlack) {
       if(this.selectedColor === "") {
-        colorOfCard = actionOfCard[gameCard.cardColor];
+        colorOfCard = actionOfCard[gamecards.cardColor];
       }
       else {
         colorOfCard = this.selectedColor;
@@ -32,33 +32,33 @@ module.exports =  class gameActionCheck {
       this.selectedColor = "";
     }
 
-    let typeOfCard = this.cardAtrributes[gameCard.cardType];
-    let valueOfCard = this.cardAtrributes[gameCard.cardType];
+    let typeOfCard = this.cardAtrributes[gamecards.cardType];
+    let valueOfCard = this.cardAtrributes[gamecards.cardType];
 
     
-    let wildRead = actionOfCard[gameCard.cardType] === gameCard.cardWild ||
-    actionOfCard[gameCard.cardType] === gameCard.WILD_DRAW_FOUR_CARD;
-    let sameColor = actionOfCard[gameCard.cardColor] === colorOfCard;
-    let sameValue = actionOfCard[gameCard.cardValue] === valueOfCard;
-    let sameType = actionOfCard[gameCard.cardType] === typeOfCard;
+    let wildRead = actionOfCard[gamecards.cardType] === gamecards.cardWild ||
+    actionOfCard[gamecards.cardType] === gamecards.WILD_DRAW_FOUR_CARD;
+    let sameColor = actionOfCard[gamecards.cardColor] === colorOfCard;
+    let sameValue = actionOfCard[gamecards.cardValue] === valueOfCard;
+    let sameType = actionOfCard[gamecards.cardType] === typeOfCard;
 
     console.log("This Card " + colorOfCard + " " + typeOfCard + " " + valueOfCard);
-    console.log("Card Action " + actionOfCard[gameCard.cardColor] + " " + actionOfCard[gameCard.cardType] + " " + actionOfCard[gameCard.cardValue]);
+    console.log("Card Action " + actionOfCard[gamecards.cardColor] + " " + actionOfCard[gamecards.cardType] + " " + actionOfCard[gamecards.cardValue]);
 
     if((sameColor || (sameValue && sameType)) || wildRead) {
-      if(actionOfCard[gameCard.cardType] === gameCard.cardSkip) {
+      if(actionOfCard[gamecards.cardType] === gamecards.cardSkip) {
         this.actionCheck = actionSkipTurn;
       }
-      else if(actionOfCard[gameCard.cardType] === gameCard.cardReverse) {
+      else if(actionOfCard[gamecards.cardType] === gamecards.cardReverse) {
         this.actionCheck = actionReverseDirection;
       }
-      else if(actionOfCard[gameCard.cardType] === gameCard.cardDrawTwo) {
+      else if(actionOfCard[gamecards.cardType] === gamecards.cardDrawTwo) {
         this.actionCheck = actionDrawTwo;
       }
-      else if(actionOfCard[gameCard.cardType] === gameCard.cardWildDrawFour) {
+      else if(actionOfCard[gamecards.cardType] === gamecards.cardWildDrawFour) {
         this.actionCheck = actionWildDrawFour;
       }
-      else if(actionOfCard[gameCard.cardType] === gameCard.cardWild) {
+      else if(actionOfCard[gamecards.cardType] === gamecards.cardWild) {
         this.actionCheck = actionChooseColor;
       }
       else {

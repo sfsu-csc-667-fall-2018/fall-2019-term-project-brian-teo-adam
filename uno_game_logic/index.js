@@ -1,9 +1,9 @@
-//Index for all files in uno_game_logic folder
+//Index file for all files in uno_game_logic folder
 
 const gamecards            = require('./gamecards'         );
 const gameCardsStack       = require('./gameCardsStack'    );
 const gameUtilities        = require('./gameUtilities'     );
-const gameAction           = require('./gameAction'        );
+const gameaction           = require('./gameaction'        );
 const gameActionCheck      = require('./gameActionCheck'   );
 const gamedeck             = require('./gamedeck'          );
 const gameDrawCards        = require('./gameDrawCards'     );
@@ -19,7 +19,7 @@ module.exports ={
    gamecards,
    gameCardsStack,
    gameUtilities,
-   gameAction,
+   gameaction,
    gameActionCheck,
    gamedeck,
    gameDrawCards,
@@ -29,4 +29,5 @@ module.exports ={
    gameboard,
    gamePlayer,
    gameSeats
+
 }

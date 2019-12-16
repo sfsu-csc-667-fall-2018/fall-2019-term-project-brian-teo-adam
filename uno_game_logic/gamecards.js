@@ -61,12 +61,12 @@ const mapIDCardArray = [ mapIDRed, mapIDYellow, mapIDGreen, //Look into this
 mapIDBlue, mapIDBlack ];
 */
 
-module.exports = class cardsUno { //You have the type of card, the color of it, and it's mapID? This can be changed. 
+module.exports = class gamecards { //You have the type of card, the color of it, and it's mapID? This can be changed. 
     constructor(type, value, color, mapId) { 
       this.typeOfCard = type;
       this.valueOfCard = value;
       this.colorOfCard = color;
-      this.mapId = mapId;
+      //this.mapId = mapId;
     }
 
     getCardAttributes() {

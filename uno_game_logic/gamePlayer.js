@@ -3,7 +3,7 @@
 module.exports =  class gamePlayer { 
   constructor(username) {
     this.username = username;
-    this.currentHand = new UnoPlayerHandCards(); //Don't have this yet
+    this.currentHand = new gameCardsInHand(); //Don't have this yet
     this.cardDealer = false;
     this.gamePoints = 0;
   }

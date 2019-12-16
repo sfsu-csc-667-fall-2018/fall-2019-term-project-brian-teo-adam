@@ -1,4 +1,4 @@
-let gameCardsStack = require('./gameCardsStack'); //don't have these yet
+let gameCardsStack = require('./gameCardsStack');
 
 
 module.exports =  class gameCardsPlayed extends gameCardsStack { //Do not have extension file yet. 

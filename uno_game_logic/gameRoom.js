@@ -1,7 +1,7 @@
-let gameBoard = require('./gameBoard');
-let gameSeats = require('./gameSeats');
+let gameboard       = require('./gameboard'      );
+let gameSeats       = require('./gameSeats'      );
 let gameActionCheck = require('./gameActionCheck');
-let gameCards = require('./gameCard');
+let gamecards       = require('./gamecards'       );
 
 
 const maximumPlayers   = 8;
@@ -19,7 +19,7 @@ const playCard = 2;
 module.exports = class gameRoom {
   constructor(gameID) {
     this.gameID = gameID;
-    this.gameBoard = new gameBoard();
+    this.gameBoard = new gameboard();
     this.gameSeats = new gameSeats();
     this.gameActionChecker = new gameActionCheck();
 
@@ -297,7 +297,7 @@ module.exports = class gameRoom {
   }
 
   getLastCardPlayed() {
-    return this.gameBoard.getTopPlayedCardsAttribute()[gameCards.cardColor];
+    return this.gameBoard.getTopPlayedCardsAttribute()[gamecards.cardColor];
   }
 
   getCurrentPlayerCardCount(){
