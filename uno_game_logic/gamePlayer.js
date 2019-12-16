@@ -4,50 +4,59 @@ module.exports =  class gamePlayer {
   constructor(username) {
     this.username = username;
     this.currentHand = new gameCardsInHand();
-    this.cardDealer = false;
+    this.playerTurn = false;
     this.gamePoints = 0;
   }
 
-//Refer back to these names to see where they are applied in other files
+  //Accepting the starting cards into a player's hand
   acceptCards(nCards) { 
     this.currentHand.placeCardsInDeck(nCards);
   }
 
+  //Best possible card to be played
   bestPlayCard(cards) {
     let bestCard = this.currentHand.deckArray[cards].getAttributesOfCards();
     return bestCard;
   }
 
+  //The outcome of the played card
   actionOfPlayedCard(cards) { 
     let playedCard = this.currentHand.cardsInHand([cards]);
     return playedCard;
   }
 
-  drawCardMove(drawnCards) { //Rename
-    this.currentHand.placeCardsInDeck(drawnCards);
+  //Player choosing to draw a card
+  playerDrawsCard(card) {
+    this.currentHand.placeCardsInDeck(card);
   }
 
-  setIAmDealer(cardDealer) { //Rename
-    this.cardDealer = cardDealer;
+  //Player's turn
+  playerTurn(turn) { 
+    this.playerTurn = turn;
   }
 
-  updateMyScore(amount) { //Rename
+  //Updating the player's score
+  playerScore(amount) { 
     this.gamePoints += amount;
   }
 
-  getNumOfCardsInHand() { //Rename
-    return this.currentHand.getNumOfCardsLeft();
+  //Cards in the player's hand
+  getPlayerHand() { 
+    return this.currentHand.getCardsStillInDeck();
   }
 
-  unoStatus() { //Rename
-    return this.currentHand.getNumOfCardsLeft() === 1;
+  //Checking that player has cards
+  handCheck() { 
+    return this.currentHand.getCardsStillInDeck() === 1;
   }
 
-  getCardInfo() { //Rename
+  //All cards available in Hand
+  getAvailableCards() { 
     return this.currentHand.deckArray;
   }
 
-  getCardsInHand() { //Rename
-    return this.currentHand.getKCardsFromDeck(this.currentHand.getNumOfCardsLeft());
+  //Current cards in Hand
+  getCurrentHand() { 
+    return this.currentHand.getNCards(this.currentHand.getCardsStillInDeck());
   }
 }
