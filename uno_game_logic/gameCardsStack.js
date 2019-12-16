@@ -3,11 +3,10 @@ module.exports =  class gameCardsStack {
       this.deckArray = [];
     }
   
-    getCardsStillInDeck() { //Look for these functions elsewhere
+    getCardsStillInDeck() {
       return this.deckArray.length;
     }
   
-    //Cards on top of the deck display the logo, while the bottom displays the card attributes.
     getNCards (n, cardsOnTop = true) {
       if(n > this.deckArray.length) {
         throw("Could not draw cards; the deck is empty");
@@ -24,9 +23,9 @@ module.exports =  class gameCardsStack {
     }
   
     //Placing cards into the deck
-    placeCardsInDeck(insertingCards, fromCardsOnTop = false) {
+    placeCardsInDeck(insertingCards, takenCardsOnTop = false) {
       for (let chosenCard of insertingCards) {
-        if(fromCardsOnTop) {
+        if(takenCardsOnTop) {
           this.deckArray.push(chosenCard);
         }
         else {
