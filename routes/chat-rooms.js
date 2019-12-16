@@ -3,7 +3,7 @@ const router = express.Router();
 
 
 const Games = require('../db/games')
-const rooms = {}
+const rooms = { }
 
 
 router.post('/room', (req, res) => {
@@ -16,9 +16,14 @@ router.post('/room', (req, res) => {
   // io.emit('room-created', req.body.room)
 })
 
-router.get('/:room', (req, res) => {
+router.get('/', (req,res) =>{
+  res.render('currentGame');
+})
 
+router.get('/:room', (req, res) => {
+  console.log("Room name ", req.params.room)
   if (rooms[req.params.room] == null) {
+    
     return res.redirect('/')
   }
   console.log("Room name ", req.params.room)
@@ -27,6 +32,9 @@ router.get('/:room', (req, res) => {
   
 })
 
+router.get('/currentGame', (req,res) =>{
+  res.render('currentGame')
+})
 router.post('/createGame', async (request, response) => {
   console.log(request.body)
 

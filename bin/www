@@ -7,7 +7,7 @@
 const app = require('../app');
 const debug = require('debug')('uno667:server');
 const http = require('http');
-const socket = require( '../socket/' );
+const socket = require('../socket/');
 
 /**
  * Get port from environment and store in Express.
@@ -21,44 +21,7 @@ app.set('port', port);
  */
 
 const server = http.createServer(app);
-
-socket.init(server)
-
-// function setSocket ( socketObj ) {
-
-//   app.use((req, res, next) => {
-//       if ( socketObj && !req.socketObj) {
-//           req.socketObj = socketObj;
-//       }
-//       next();
-//   });
-// }
-// socket = io(server);
-// socket.on('connection', () => {
-//   console.log('New user connected');
-//   //default username
-// 	socket.username = "Anonymous"
-
-//   //listen on change_username
-//   socket.on('change_username', (data) => {
-//     console.log(data)
-//       socket.username = data.username
-//   })
-
-//   //listen on new_message
-//   socket.on('new_message', (data) => {
-//       //broadcast the new message
-//       console.log("new message www")
-//       io.sockets.emit('new_message', {message : data.message, username : socket.username});
-//   })
-
-//   //listen on typing
-//   socket.on('typing', (data) => {
-//     socket.broadcast.emit('typing', {username : socket.username})
-//   })
-// })
-
-
+socket.init(app, server)
 /**
  * Listen on provided port, on all network interfaces.
  */

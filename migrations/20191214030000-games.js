@@ -11,7 +11,7 @@ module.exports = {
       name: {
         allowNull: false,
         type: Sequelize.STRING,
-        unique: true
+        unique: false
       },
       started: {
         type: Sequelize.BOOLEAN,

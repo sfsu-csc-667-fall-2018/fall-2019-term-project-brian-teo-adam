@@ -11,7 +11,7 @@ router.get('/', forwardAuthenticated, function (req, res, next) {
 });
 
 router.get('/lobby', ensureAuthenticated, function (req, res, next) {
-  res.render('lobby', { rooms: rooms });
+  res.render('lobby');
   console.log("index rooms", rooms)
 });
 
