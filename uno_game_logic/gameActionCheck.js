@@ -1,7 +1,7 @@
 let gamecards = require('./gamecards');
 
-const actionSkipTurn = "SkipTurn"; //These were all capital and had "_" in between each word
-const actionReverseDirection = "ReverseDirection";
+const actionReverse = "ReverseDirection";
+const actionSkipTurn = "SkipTurn";
 const actionDrawTwo = "DrawTwo";
 const actionWildDrawFour = "DrawFour";
 const actionChooseColor = "ChooseColor";
@@ -14,14 +14,15 @@ module.exports =  class gameActionCheck {
     this.selectedColor = "";
   }
 
-  resetMoveResult() { //Check on these functions and change. 
+  resultOfNewAction() { 
     this.actionCheck = actionDefault;
   }
 
-  checkMoveValidity(action) {
+  //actions that can be accepted by the game
+  acceptedAction(action) {
     let colorOfCard = this.cardAtrributes[gamecards.cardColor];
-    let actionOfCard = action.getCardAttributes();
-    if(colorOfCard === gamecards.colorBlack) {
+    let actionOfCard = action.getAttributesOfCards();
+    if(colorOfCard === gamecards.colorAllWild) {
       if(this.selectedColor === "") {
         colorOfCard = actionOfCard[gamecards.cardColor];
       }
@@ -37,7 +38,7 @@ module.exports =  class gameActionCheck {
 
     
     let wildRead = actionOfCard[gamecards.cardType] === gamecards.cardWild ||
-    actionOfCard[gamecards.cardType] === gamecards.WILD_DRAW_FOUR_CARD;
+    actionOfCard[gamecards.cardType] === gamecards.cardWildDrawFour;
     let sameColor = actionOfCard[gamecards.cardColor] === colorOfCard;
     let sameValue = actionOfCard[gamecards.cardValue] === valueOfCard;
     let sameType = actionOfCard[gamecards.cardType] === typeOfCard;
@@ -50,7 +51,7 @@ module.exports =  class gameActionCheck {
         this.actionCheck = actionSkipTurn;
       }
       else if(actionOfCard[gamecards.cardType] === gamecards.cardReverse) {
-        this.actionCheck = actionReverseDirection;
+        this.actionCheck = actionReverse;
       }
       else if(actionOfCard[gamecards.cardType] === gamecards.cardDrawTwo) {
         this.actionCheck = actionDrawTwo;
@@ -71,35 +72,37 @@ module.exports =  class gameActionCheck {
     return false;
   }
 
-  getTopOfPlayedPileCardAttributes(playedCardsDeck) { //Look for these functions elsewhere
+
+  getMostPlayedCards(playedCardsDeck) {
     this.cardAtrributes = playedCardsDeck;
   }
 
-  setNewColor(newCardColor) {
+  //When wild or wild draw four, set a card color
+  setColorOfCard(newCardColor) {
     this.selectedColor = newCardColor;
   }
 
-  static get MOVE_RESULT_NEXT_PLAYER_SKIP() {
+  static get actionReverse() {
+    return actionReverse;
+  }
+
+  static get actionSkipTurn() {
     return actionSkipTurn;
   }
 
-  static get MOVE_RESULT_REVERSE_PLAY_DIRECTION() {
-    return actionReverseDirection;
-  }
-
-  static get MOVE_RESULT_NEXT_PLAYER_DRAW_FOUR() {
-    return actionWildDrawFour;
-  }
-
-  static get MOVE_RESULT_NEXT_PLAYER_DRAW_TWO() {
-    return actionDrawTwo;
-  }
-
-  static get MOVE_RESULT_CHOOSE_COLOR() {
+  static get actionChooseColor() {
     return actionChooseColor;
   }
 
-  static get MOVE_RESULT_DEFAULT() {
+  static get actionDrawTwo() {
+    return actionDrawTwo;
+  }
+
+  static get actionWildDrawFour() {
+    return actionWildDrawFour;
+  }
+
+  static get actionDefault() {
     return actionDefault;
   }
 }
