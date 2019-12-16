@@ -2,31 +2,28 @@
 const cardType  = "TYPE";
 const cardValue = "VALUE";
 const cardColor = "COLOR";
-//const cardMapID = "MAPID"; Need to figure out exactly what Map ID does.
 
 //Different colors that a card may have
-const colorRed     = "RED"; //Color of cards Red, Yellow, Green, Blue, Black ( Black as in All?)
-const colorYellow  = "YELLOW"; //Do these need to be capitalized?
+const colorRed     = "RED";
+const colorYellow  = "YELLOW"; 
 const colorGreen   = "GREEN";
 const colorBlue    = "BLUE";
-const colorBlack   = "BLACK"; //Maybe consider naming "Black", into "all" color?
+const colorAllWild = "ALL"; 
 
 const colorCardArray = [ colorRed, colorYellow, colorGreen, 
-colorBlue, colorBlack ]; //Change "Black to all"
+colorBlue, colorAllWild ]; 
 
 //The different types of cards with no color association
-//Capitalize what is in quotes? or Rename all variables?
-const cardNumber        = "cardNumber"; //Any Numberd Card
-const cardReverse       = "cardReverse"; //Reverse Card
-const cardSkip          = "cardSkip"; //Skip card
-const cardDrawTwo       = "cardDrawTwo"; //Draw Two Card
-const cardWild          = "cardWild"; //Wild Card
-const cardWildDrawFour  = "cardWildDrawFour"; //Wild and Draw Four Card
+const cardNumber        = "cardNumber"; 
+const cardReverse       = "cardReverse"; 
+const cardSkip          = "cardSkip";
+const cardDrawTwo       = "cardDrawTwo"; 
+const cardWild          = "cardWild"; 
+const cardWildDrawFour  = "cardWildDrawFour"; 
 
 const typeCardArray = [ cardNumber, cardReverse, cardSkip,
 cardDrawTwo, cardWild, cardDrawFourWild ];
 
-//The values of every numbered card and unique card
 const valueZero = 0; //Value of numbered cards from 0-9
 const valueOne  = 1;
 const valueTwo = 2;
@@ -37,44 +34,33 @@ const valueSix = 6;
 const valueSeven = 7;
 const valueEight = 8;
 const valueNine = 9;
-const valueReverse = 20; //Not sure why these are 20
+const valueReverse = 20; 
 const valueSkip = 20;
 const valueDrawTwo = 20;
-const valueWild = 50; //Not sure why these are 50
+const valueWild = 50; 
 const valueWildDrawFour = 50;
 
-const valueCardArray = [ valueZero, valueOne, valueTwo, //Putting card values into an array?
+//Putting card values into an array
+const valueCardArray = [ valueZero, valueOne, valueTwo,
 valueThree, valueFour, valueFive, valueSix, valueSeven, valueEight,
 valueNine, valueReverses, valueSkip, valueDrawTwo,
 valueWild, valueWildDrawFour ];
 
-/*
-const mapIDRed        = 0; //Not sure about this but maybe where the card location is mapped to?
-const mapIDYellow     = 13; //Yellow was 39, Green was 13, and Blue was 26, I swapped Yellow's position
-const mapIDGreen      = 26;
-const mapIDBlue       = 39;
-const mapIDBlack      = 100; //Black can probably be replaced with "all" values
-*/
+module.exports = class gamecards { 
 
-/* Need to look into more of the mapID stuff
-const mapIDCardArray = [ mapIDRed, mapIDYellow, mapIDGreen, //Look into this
-mapIDBlue, mapIDBlack ];
-*/
-
-module.exports = class gamecards { //You have the type of card, the color of it, and it's mapID? This can be changed. 
-    constructor(type, value, color, mapId) { 
+  //You have the type of card, the value of it, and the color of it
+    constructor(type, value, color) { 
       this.typeOfCard = type;
       this.valueOfCard = value;
       this.colorOfCard = color;
-      //this.mapId = mapId;
     }
 
     getAttributesOfCards() {
         let cardAttributes = {};
-        cardAttributes[cardType] = this.typeOfCard; //What type of card it is 
-        cardAttributes[cardValue] = this.valueOfCard; //What the value of the card is
-        cardAttributes[cardColor] = this.colorOfCard; //What color the card is
-        //cardAttributes[cardMapID] = this.mapId; //MapId? I don't know what it means //Currently not using mapID
+        cardAttributes[cardType] = this.typeOfCard; //What the card's type, value, and color is 
+        cardAttributes[cardValue] = this.valueOfCard; 
+        cardAttributes[cardColor] = this.colorOfCard; 
+
         return cardAttributes;
       }
 
@@ -103,10 +89,6 @@ module.exports = class gamecards { //You have the type of card, the color of it,
       return set1.valueOfCard - set2.valueOfCard;
     }
 }
-/*static cardSortCriteriaWithMap(set1, set2) { //Currently not using map
-    return set1.mapId - set2.mapId;
-  }
-*/
 
   //Type card characteristc getters
   static get cardNumber() {
@@ -137,7 +119,7 @@ module.exports = class gamecards { //You have the type of card, the color of it,
     return typeCardArray;
   }
 
-  //Color color getters
+  //Color getters
   static get colorRed() {
     return colorRed;
   }
@@ -154,8 +136,8 @@ module.exports = class gamecards { //You have the type of card, the color of it,
     return colorBlue;
   }
 
-  static get colorBlack() { //Maybe change black to all
-    return colorBlack;
+  static get colorAllWild() {
+    return colorAllWild;
   }
 
   static get colorCardArray() {
@@ -223,33 +205,24 @@ module.exports = class gamecards { //You have the type of card, the color of it,
     return valueWildDrawFour;
   }
 
+  static get cardType() {
+    return cardType;
+  }
+
+  static get colorCardArray() {
+    return colorCardArray;
+  }
+
+  static get cardValue() {
+    return cardValue;
+  }
+
+  static get cardColor() {
+    return cardColor;
+  }
+
   static get valueCardArray() {
     return valueCardArray;
   }
-
-  static get CARD_COLOR_ARRAY() {
-    return CARD_COLOR_ARRAY;
-  }
-
-  static get UNO_CARD_TYPE() {
-    return UNO_CARD_TYPE;
-  }
-
-  static get UNO_CARD_VALUE() {
-    return UNO_CARD_VALUE;
-  }
-
-  static get UNO_CARD_COLOR() {
-    return UNO_CARD_COLOR;
-  }
-
-  static get CARD_MAP_ID() {
-    return CARD_MAP_ID;
-  }
-
-  static get UNO_CARD_MAPID() {
-    return UNO_CARD_MAPID;
-  }
-
 
 }
