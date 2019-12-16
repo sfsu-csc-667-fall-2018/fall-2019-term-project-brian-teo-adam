@@ -1,7 +1,7 @@
+let gameActionCheck = require('./gameActionCheck');
+let gamecards       = require('./gamecards'      );
 let gameboard       = require('./gameboard'      );
 let gameSeats       = require('./gameSeats'      );
-let gameActionCheck = require('./gameActionCheck');
-let gamecards       = require('./gamecards'       );
 
 
 const maximumPlayers   = 8;
@@ -10,32 +10,32 @@ const minimumPlayers   = 2;
 const directionClockwise        = true;
 const directionCounterClockwise = false;
 
-const winningPoints = 500;
+const winningPoints = 250;
 
 const drawCard = 1;
 const playCard = 2;
 
 
 module.exports = class gameRoom {
-  constructor(gameID) {
-    this.gameID = gameID;
-    this.gameBoard = new gameboard();
-    this.gameSeats = new gameSeats();
+  constructor(gameRoom) {
+    this.gameRoom = gameRoom;
     this.gameActionChecker = new gameActionCheck();
+    this.gameboard = new gameboard();
+    this.gameSeats = new gameSeats();
 
-    this.playerReached500Points = false;
-    this.directionOfPlay = directionClockwise;
-    this.currentPlayerPos = 0;
-    this.dealerPosition = 0;
-    this.playerFinished = false;
-    this.finishedPlayerPos = -1;
-    this.gameStarted = false;
+    this.gameDirection = directionClockwise;
+    this.playerSeatedAt = 0;
+    this.cardsDealtAt = 0;
+    this.gameInSession = false;
+    this.firstTo250 = false;
+    this.completedGame = false;
+    this.playerCompletedGame = -1;
   }
 
-  addPlayer(nPlayer) {
-    console.log("GAME ID " + this.gameID + " Added: "+nPlayer.name);
-    if(this.playerSeats.getNumOfPlayers() < maximumPlayers) {
-      this.playerSeats.addPlayer(nPlayer);
+  addNewPlayer(playerBeingAdded) {
+    console.log("Game Room " + this.gameRoom + " Player " + playerBeingAdded.name + " has been added.");
+    if(this.playerSeats.getTotalPlayers() < maximumPlayers) {
+      this.playerSeats.addNewPlayer(playerBeingAdded);
       return true;
     }
     else {
@@ -43,65 +43,71 @@ module.exports = class gameRoom {
     }
   }
 
-  getNumOfPlayers() {
-    return this.playerSeats.getNumOfPlayers();
+  getTotalPlayers() {
+    return this.playerSeats.getTotalPlayers();
   }
 
-  startRound() {
-    this.directionOfPlay = directionClockwise;
-    this.gameBoard.dealCardsToPlayers(this.playerSeats.playerArray, this.dealerPosition);
-    this.gameBoard.creatingDrawDeck();
-    this.gameBoard.creatingPlayedDeck();
-    this.gameActionCheck.resetMoveResult();
-    this.gameActionCheck.getTopOfPlayedPileCardAttributes(this.gameBoard.getMostPlayedCard());
-    this.currentPlayerPos = this.dealerPosition;
-    this.updatePlayerPosition();
+  //Game ready to play
+  enteringFirstGame() {
+    this.gameDirection = directionClockwise;
+    this.gameboard.cardDealing(this.playerSeats.playerArray, this.cardsDealtAt);
+    this.gameboard.creatingDrawDeck();
+    this.gameboard.creatingPlayedDeck();
+    this.gameActionCheck.resultOfNewAction();
+    this.gameActionCheck.getMostPlayedCards(this.gameboard.getMostPlayedCards());
+    this.playerSeatedAt = this.cardsDealtAt;
+    this.memberSeatChange();
   }
 
-  sumPlayerCards(playerResults) { //total was sum. Need new function name.
+  allCardsInHand(playerResults) { 
+    let inGameCards = playerResults.getCurrentHand();
     let total = 0;
-    let cards = playerResults.getCardsInHand();
-    for(let c in cards) {
-      total += c.valueOfCard;
+
+    for(let cards in inGameCards) {
+      total += cards.valueOfCard;
     }
     return total;
   }
 
-  calculatePlayersScores() {
-    let roundScore = 0;
-    for (let index = 0; index < this.playerSeats.getNumOfPlayers(); index++){
-      if(index != this.currentPlayerPos) {
-        roundScore += sumPlayerCards(this.playerSeats.playerArray[index]);
+  inGamePoints() {
+    let currentPoints = 0;
+
+    for (let index = 0; index < this.playerSeats.getTotalPlayers(); index++){
+      if(index != this.playerSeatedAt) {
+        currentPoints += allCardsInHand(this.playerSeats.playerArray[index]);
       }
     }
-    this.playerSeats.playerArray[this.currentPlayerPos].updateMyScore(roundScore);
-    if(this.playerSeats.playerArray[this.currentPlayerPos].myScore >= winningPoints) {
-      this.playerReached500Points = true;
+    this.playerSeats.playerArray[this.playerSeatedAt].playerScore(currentPoints);
+    if(this.playerSeats.playerArray[this.playerSeatedAt].myScore >= winningPoints) {
+      this.firstTo250 = true;
     }
-    this.playerReached500Points = true;
-    this.dealerPosition = (this.dealerPosition + 1) % this.playerSeats.getNumOfPlayers();
+    this.firstTo250 = true;
+    this.cardsDealtAt = (this.cardsDealtAt + 1) % this.playerSeats.getTotalPlayers();
   }
 
-  isPlayerFinished(currentPlayer) {
-    if(currentPlayer.getNumOfCardsInHand() === 0) {
-      this.playerFinished = true;
+  playerCompletedGame(inGamePlayer) {
+    if(inGamePlayer.getPlayerHand() === 0) {
+      this.completedGame = true;
     }
   }
 
-  updatePlayerPosition() {
-    if(this.directionOfPlay === directionClockwise) {
-      this.currentPlayerPos = (this.currentPlayerPos + 1) % this.playerSeats.getNumOfPlayers();
+  memberSeatChange() {
+    if(this.gameDirection === directionClockwise) {
+      this.playerSeatedAt = (this.playerSeatedAt + 1) % this.playerSeats.getTotalPlayers();
     }
     else {
-      this.currentPlayerPos -= 1;
-      if(this.currentPlayerPos < 0) {
-        this.currentPlayerPos = this.playerSeats.getNumOfPlayers()-1;
+      this.playerSeatedAt -= 1;
+      if(this.playerSeatedAt < 0) {
+        this.playerSeatedAt = this.playerSeats.getTotalPlayeers() - 1;
       }
     }
-    console.log("AFTER UPDATING currentPlayerPos " + this.currentPlayerPos);
+
+    console.log("Player moved: playerSeatedAt " + this.playerSeatedAt);
+
   }
 
-  startGame() {
+  //Will only start game when requirements are met
+  validGameLobby() {
     if(this.playerSeats.playerArray.length < minimumPlayers) {
       alert("Minimum players requirement not met");
       return false;
@@ -112,83 +118,83 @@ module.exports = class gameRoom {
     }
   }
 
-  getCurrentPlayer() {
-    console.log("Position of player " + this.currentPlayerPos);
+  playerIndexAt() {
+    console.log("Position of player " + this.playerSeatedAt);
 
-    let currentPlayer = this.playerSeats.getPlayerAt(this.currentPlayerPos);
-    return currentPlayer;
+    let inGamePlayer = this.playerSeats.getSeatOfPlayer(this.playerSeatedAt);
+    return inGamePlayer;
   }
 
-  checkResultOfLastMove() {
-    let currTopCard = this.gameBoard.getMostPlayedCard();
-    this.unoMoveChecker.getTopOfPlayedPileCardAttributes(currTopCard);
-    let resultOfLastPlay = this.unoMoveChecker.moveResult;
-    //Check result is from function above.
-    console.log("gameRoom checkResultOfLastMove result " + resultOfLastPlay);
+  mostRecentPlayerAction() {
+    let recentPlayedCard = this.gameboard.getMostPlayedCard();
+    this.gameActionCheck.getMostPlayedCards(recentPlayedCard);
+    let cardPlayed = this.gameActionCheck.moveResult;
 
-    if(resultOfLastPlay === gameActionCheck.actionWildDrawFour) {
-      console.log("gameRoom checkResultOfLastMove in actionWildDrawFour");
-      this.getCurrentPlayer().receiveCards(this.gameBoard.getNewCardsToDraw(4));
-      this.unoMoveChecker.resetMoveResult();
+    console.log("gameRoom mostRecentPlayerAction outcome " + cardPlayed);
+
+    if(cardPlayed === gameActionCheck.actionWildDrawFour) {
+      console.log("gameRoom mostRecentPlayerAction in actionWildDrawFour");
+      this.playerIndexAt().acceptCards(this.gameboard.getNewCardsToDraw(4));
+      this.gameActionCheck.resultOfNewAction();
     }
-    else if(resultOfLastPlay === gameActionCheck.actionDrawTwo) {
-      console.log("gameRoom checkResultOfLastMove in actionDrawTwo");
-      this.getCurrentPlayer().receiveCards(this.gameBoard.getNewCardsToDraw(2));
-      this.unoMoveChecker.resetMoveResult();
+    else if(cardPlayed === gameActionCheck.actionDrawTwo) {
+      console.log("gameRoom mostRecentPlayerAction in actionDrawTwo");
+      this.playerIndexAt().acceptCards(this.gameboard.getNewCardsToDraw(2));
+      this.gameActionCheck.resultOfNewAction();
     }
-    else if(resultOfLastPlay === gameActionCheck.actionSkipTurn ) {
-      console.log("gameRoom checkResultOfLastMove in actionSkipTurn");
-      console.log("SKIPPING PLAYER " + this.getCurrentPlayer().name); //Change to player skipped?
-      this.unoMoveChecker.resetMoveResult();
+    else if(cardPlayed === gameActionCheck.actionSkipTurn ) {
+      console.log("gameRoom mostRecentPlayerAction in actionSkipTurn");
+      console.log("Player now skipped " + this.playerIndexAt().name);
+      this.gameActionCheck.resultOfNewAction();
     }
 
-    else { //UnoMoveChecker.MOVE_RESULT_DEFAULT or UnoMoveChecker.MOVE_RESULT_CHOOSE_COLOR
-       this.unoMoveChecker.resetMoveResult();
+    else { 
+       this.gameActionCheck.resultOfNewAction();
     }
-    console.log("Previous play results " + resultOfLastPlay);
-    return resultOfLastPlay;
+    console.log("Previous play results " + cardPlayed);
+    return cardPlayed;
   }
 
-  drawPlayerCards(numOfCards=1) {
-    return this.gameBoard.getNewCardsToDraw(numOfCards);
+  cardsPlayerReceives(playerCardsReceived = 1) {
+    return this.gameboard.getNewCardsToDraw(playerCardsReceived);
   }
 
-  static get MAX_NUM_PLAYERS() {
-    return maximumPlayers;
-  }
-
-  static get MIN_NUM_PLAYERS() {
-    return minimumPlayers;
-  }
-
-  static get CLOCKWISE(){
+  static get directionClockwise(){
     return directionClockwise;
   }
 
-  static get COUNTER_CLOCKWISE() {
+  static get maximumPlayers() {
+    return maximumPlayers;
+  }
+
+  static get minimumPlayers() {
+    return minimumPlayers;
+  }
+
+  static get directionCounterClockwise() {
     return directionCounterClockwise;
   }
 
-  static get DRAW_CARD_MOVE() {
+  static get drawCard() {
     return drawCard;
   }
 
-  static get PLAY_CARD_MOVE() {
+  static get playCard() {
     return playCard;
   }
 
   getPlayerState(nPlayer, beforeTurn=true) {
     if(beforeTurn) {
-      console.log("===== BEFORE TURN =====");
+      console.log("Before Card Was Played");
     }
     else {
-      console.log("===== AFTER TURN =====");
+      console.log("After Card Was Played");
     }
-    console.log("===== " + nPlayer.name + " =====");
+    console.log("  " + nPlayer.name + " ");
     let cards = "\n";
     let index = 0;
-    for(let card of nPlayer.myHand.deckArray) { //myhand and deckArray
-      cards += index + " " + card.typeOfCard + " " + card.valueOfCard + " " + card.colorOfCard + " \n"; //Where are all after dots
+    for(let card of nPlayer.myHand.deckArray) { 
+      cards += index + " " + card.typeOfCard + " " + card.valueOfCard + " " + card.colorOfCard + " \n"; 
       index++;
     }
     console.log(cards);
@@ -202,11 +208,11 @@ module.exports = class gameRoom {
 
   //FOR SERVER INTERACTION
   getDrawDeckCards() {
-    return this.gameBoard.getDrawnCards();
+    return this.gameboard.getDrawnCards();
   }
 
   getPlayedDeckCards() {
-    return this.gameBoard.getPlayedCards();
+    return this.gameboard.getPlayedCards();
   }
 
   getPlayerHands(nPlayerName) {
@@ -219,7 +225,7 @@ module.exports = class gameRoom {
   }
 
   getCurrentTopCardAttributes() {
-    return this.gameBoard.getMostPlayedCard();
+    return this.gameboard.getMostPlayedCard();
   }
 
   getPlayers() {
@@ -227,18 +233,18 @@ module.exports = class gameRoom {
   }
 
   getCurrentPlayerIndex() {
-    return this.currentPlayerPos;
+    return this.playerSeatedAt;
   }
 
   currentPlayerDrewACard() {
-    let prevResult = this.checkResultOfLastMove();
+    let prevResult = this.mostRecentPlayerAction();
     console.log("DRAW CARD PREV RESULT === " + prevResult);
     if(prevResult != gameActionCheck.actionDefault) {
       return true;
     }
 
     try {
-      this.getCurrentPlayer().receiveCards(this.gameBoard.getNewCardsToDraw(1));
+      this.playerIndexAt().receiveCards(this.gameboard.getNewCardsToDraw(1));
     }
     catch (err) {
       console.log("Could not draw card " + err);
@@ -248,7 +254,7 @@ module.exports = class gameRoom {
   }
 
   currentPlayerPlayedACard(cardIndex) {
-    let prevResult = this.checkResultOfLastMove();
+    let prevResult = this.mostRecentPlayerAction();
 
     console.log("Result of previous move " + prevResult);
     if(prevResult != gameActionCheck.actionDefault) {
@@ -256,21 +262,21 @@ module.exports = class gameRoom {
     }
 
     try {
-      let cardToPlay = this.getCurrentPlayer().playCardMove(cardIndex);
-      let result = this.unoMoveChecker.checkMoveValidity(cardToPlay);
+      let cardToPlay = this.playerIndexAt().playCardMove(cardIndex);
+      let result = this.gameActionCheck.checkMoveValidity(cardToPlay);
       if(!result) {
-        this.getCurrentPlayer().receiveCards([cardToPlay]);
+        this.playerIndexAt().receiveCards([cardToPlay]);
         return result;
       }
-      this.gameBoard.playedCardsDeck(cardToPlay);
+      this.gameboard.playedCardsDeck(cardToPlay);
       if(this.gameActionCheck.moveResult === gameActionCheck.actionReverseDirection) { //move result
-        this.directionOfPlay = !this.directionOfPlay;
-        this.unoMoveChecker.resetMoveResult();
+        this.gameDirection = !this.gameDirection;
+        this.gameActionCheck.resetMoveResult();
       }
     }
     catch(err) {
     
-      console.log("There has been an error... " + err); //Was Something terrible has happened...
+      console.log("There has been an error... " + err);
       return false;
     }
     return true;
@@ -297,11 +303,11 @@ module.exports = class gameRoom {
   }
 
   getLastCardPlayed() {
-    return this.gameBoard.getMostPlayedCard()[gamecards.cardColor];
+    return this.gameboard.getMostPlayedCard()[gamecards.cardColor];
   }
 
   getCurrentPlayerCardCount(){
-    return this.getCurrentPlayer().getNumOfCardsInHand();
+    return this.playerIndexAt().getNumOfCardsInHand();
   }
 
   requestPlayerIndex(username){
