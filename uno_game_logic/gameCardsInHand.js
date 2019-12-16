@@ -1,12 +1,12 @@
-//let UnoPileOfCards = require('./UnoPileOfCards');
+let gameCardsStack = require('./gameCardsStack');
 
-module.exports = class gameCardsInHand extends UnoPileOfCards { //What is this file related to?
+module.exports = class gameCardsInHand extends gameCardsStack {
   constructor() {
     super();
  }
 
- pickCardsAtIndices(index) { //Check if this is called anywhere
-    let selection = this.deckArray.splice(index, 1);
-    return selection[0];
+ cardsInHand(cardChosen) { 
+    let card = this.deckArray.splice(cardChosen, 1);
+    return card[0];
  }
 }

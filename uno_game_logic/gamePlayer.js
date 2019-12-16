@@ -1,29 +1,30 @@
-//let UnoPlayerHandCards = require('./UnoPlayerHandCards'); Do not have these files yet
+let gameCardsInHand = require('./gameCardsInHand');
 
 module.exports =  class gamePlayer { 
   constructor(username) {
     this.username = username;
-    this.currentHand = new gameCardsInHand(); //Don't have this yet
+    this.currentHand = new gameCardsInHand();
     this.cardDealer = false;
     this.gamePoints = 0;
   }
+
 //Refer back to these names to see where they are applied in other files
-  receiveCards(nCards) { //Rename
-    this.currentHand.insertCards(nCards);
+  acceptCards(nCards) { 
+    this.currentHand.placeCardsInDeck(nCards);
   }
 
-  proposeCardToPlay(index) { //Rename
-    let proposedCard = this.currentHand.deckArray[index].getCardAttributes();
-    return proposedCard;
+  bestPlayCard(cards) {
+    let bestCard = this.currentHand.deckArray[cards].getAttributesOfCards();
+    return bestCard;
   }
 
-  playCardMove(index) { //Rename
-    let cardToPlay = this.currentHand.pickCardsAtIndices([index]);
-    return cardToPlay;
+  actionOfPlayedCard(cards) { 
+    let playedCard = this.currentHand.cardsInHand([cards]);
+    return playedCard;
   }
 
   drawCardMove(drawnCards) { //Rename
-    this.currentHand.insertCards(drawnCards);
+    this.currentHand.placeCardsInDeck(drawnCards);
   }
 
   setIAmDealer(cardDealer) { //Rename

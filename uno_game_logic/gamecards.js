@@ -69,7 +69,7 @@ module.exports = class gamecards { //You have the type of card, the color of it,
       //this.mapId = mapId;
     }
 
-    getCardAttributes() {
+    getAttributesOfCards() {
         let cardAttributes = {};
         cardAttributes[cardType] = this.typeOfCard; //What type of card it is 
         cardAttributes[cardValue] = this.valueOfCard; //What the value of the card is

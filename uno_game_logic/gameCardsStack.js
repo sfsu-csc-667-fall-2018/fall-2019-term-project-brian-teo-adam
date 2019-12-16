@@ -23,7 +23,8 @@ module.exports =  class gameCardsStack {
       return returningCards;
     }
   
-    insertCards(insertingCards, fromCardsOnTop = false) {
+    //Placing cards into the deck
+    placeCardsInDeck(insertingCards, fromCardsOnTop = false) {
       for (let chosenCard of insertingCards) {
         if(fromCardsOnTop) {
           this.deckArray.push(chosenCard);
