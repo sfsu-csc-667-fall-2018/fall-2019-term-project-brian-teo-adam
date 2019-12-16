@@ -1,86 +1,75 @@
-/*
-let UnoDeck = require('./gamedeck'); //"UnoDeck" to "gamedeck"
-let UnoDrawCardsPile = require('./gameDrawCards');
-let UnoPlayedCardsPile = require('./UnoPlayedCardsPile'); //haven't got these files yet
-*/
-//Must return to this file! Important for upcoming changes. Must edit from line 24, receive cards and on. 
+let gamedeck = require('./gamedeck');
+let gameDrawCards = require('./gameDrawCards');
+let gameCardsPlayed = require('./gameCardsPlayed');
+
 
 module.exports = class gameboard {
   constructor() {
-    this.gamedeck = new gamedeck(); //UnoDeck to gamedeck
-    this.drawPile = new gameDrawCards(); //check where drawPile comes from
-    //this.playedPile = new UnoPlayedCardsPile();//Don't have this file yet
+    this.gameDeck = new gamedeck(); 
+    this.cardsToDraw = new gameDrawCards(); 
+    this.cardsPlayed = new gameCardsPlayed();
   }
 
-  cardDealing(nPlayers, dealingPosition = 0) {
-      //Below was commented out before Brian did.
-    // this.numOfPlayers = kPlayers.length;
-    // this.unoDeck.dealCards(kPlayers, dealerPos);
-    //Above comments can possibly be deleted.
+  cardDealing(nCurrentPlayers, currentIndex = 0) {
     
     for(let i = 0; i < gamedeck.startingCards; i++) {
-      for(let j = 0; j < nPlayers.length; j++) {
-        let currentDealingPosition = (j + dealingPosition) % nPlayers.length;
-        /*
-        nPlayers[currentDealingPosition].receiveCards(this.gamedeck.getKCardsFromDeck(1)); //Check where receiveCards and getKCardsFromDeck comes from
+      for(let j = 0; j < nCurrentPlayers.length; j++) {
+        let currentDealingPosition = (j + currentIndex) % nCurrentPlayers.length;
+        
+        nCurrentPlayers[currentDealingPosition].acceptCards(this.gameDeck.getNCards(1)); 
       }
     }
   }
 
-  setupDrawCardsPile() {
-    this.drawPile.buildDrawCardsPile(this.unoDeck.emptyDeck());
+  creatingDrawDeck() {
+    this.cardsToDraw.creatingDeckToDrawFrom(this.gameDeck.emptyGameDeck());
   }
 
-  setupPlayedCardsPile() {
-    this.playedPile.receiveKPlayedCards(this.drawPile.getKNextCards(1));
+  creatingPlayedDeck() {
+    this.cardsPlayed.obtainCardsOutOfGame(this.cardsToDraw.getNMoreCards(1));
   }
 
-  resetDrawCardsPile() {
-    let cardsToInsert = this.playedPile.getKCardsFromDeck(this.playedPile.getNumOfCardsLeft());
-    this.drawPile.insertCards(cardsToInsert);
-    this.drawPile.shuffleDeck();
+  newDrawDeck() {
+    let newCardsPlaced = this.cardsPlayed.getNCards(this.cardsPlayed.getCardsStillInDeck());
+    this.cardsToDraw.placeCardsInDeck(newCardsPlaced);
+    this.cardsToDraw.shuffleCardsInDeck();
   }
 
-  getKCardsFromDrawCards(k) {
-    let cards = []
-    if(k > this.drawPile.getNumOfCardsLeft()) {
-      let remaining = this.drawPile.getNumOfCardsLeft();
-      k -= remaining;
-      cards = this.drawPile.getKNextCards(remaining);
+  getNewCardsToDraw (newCards) {
+    let currentCards = []
+    if(newCards > this.cardsToDraw.getCardsStillInDeck()) {
+      let cardsLeft = this.cardsToDraw.getCardsStillInDeck();
+      newCards -= cardsLeft;
+      currentCards = this.cardsToDraw.getNMoreCards(cardsLeft);
 
-      this.resetDrawCardsPile();
+      this.newDrawDeck();
 
-      remainingCards = this.drawPile.getKNextCards(k);
-      for(let c of remainingCards) {
-        cards.push(c);
+      remainingCards = this.cardsToDraw.getNMoreCards(newCards);
+      for(let cards of remainingCards) {
+        currentCards.push(cards);
       }
     }
     else {
-      cards = this.drawPile.getKNextCards(k);
+      currentCards = this.cardsToDraw.getNMoreCards(newCards);
     }
 
-    return cards;
+    return currentCards;
   }
 
-  putCardToPlayedCards(kCard) {
-    this.playedPile.receiveKPlayedCards([kCard]);
+  playedCardsDeck(nCards) {
+    this.cardsPlayed.obtainCardsOutOfGame([nCards]);
   }
 
-  getTopPlayedCardsAttribute() {
-    return this.playedPile.readBottomOfDeck();
+  getDrawnCards() {
+    return this.cardsToDraw.deckArray;
   }
 
-  //Comment put before Brian, 
-  //For Server interaction
-  getDrawDeckCards() {
-    return this.drawPile.deckArray;
+  getPlayedCards() {
+    return this.cardsPlayed.deckArray;
   }
 
-  getPlayedDeckCards() {
-    return this.playedPile.deckArray;
+  getMostPlayedCard() {
+    return this.cardsPlayed.endOfDeck();
   }
-  */
-}
-    }
-} //Three } can be deleted once code is fixed.
+
 };

@@ -50,10 +50,10 @@ module.exports = class gameRoom {
   startRound() {
     this.directionOfPlay = directionClockwise;
     this.gameBoard.dealCardsToPlayers(this.playerSeats.playerArray, this.dealerPosition);
-    this.gameBoard.setupDrawCardsPile();
-    this.gameBoard.setupPlayedCardsPile();
+    this.gameBoard.creatingDrawDeck();
+    this.gameBoard.creatingPlayedDeck();
     this.gameActionCheck.resetMoveResult();
-    this.gameActionCheck.getTopOfPlayedPileCardAttributes(this.gameBoard.getTopPlayedCardsAttribute());
+    this.gameActionCheck.getTopOfPlayedPileCardAttributes(this.gameBoard.getMostPlayedCard());
     this.currentPlayerPos = this.dealerPosition;
     this.updatePlayerPosition();
   }
@@ -120,7 +120,7 @@ module.exports = class gameRoom {
   }
 
   checkResultOfLastMove() {
-    let currTopCard = this.gameBoard.getTopPlayedCardsAttribute();
+    let currTopCard = this.gameBoard.getMostPlayedCard();
     this.unoMoveChecker.getTopOfPlayedPileCardAttributes(currTopCard);
     let resultOfLastPlay = this.unoMoveChecker.moveResult;
     //Check result is from function above.
@@ -128,12 +128,12 @@ module.exports = class gameRoom {
 
     if(resultOfLastPlay === gameActionCheck.actionWildDrawFour) {
       console.log("gameRoom checkResultOfLastMove in actionWildDrawFour");
-      this.getCurrentPlayer().receiveCards(this.gameBoard.getKCardsFromDrawCards(4));
+      this.getCurrentPlayer().receiveCards(this.gameBoard.getNewCardsToDraw(4));
       this.unoMoveChecker.resetMoveResult();
     }
     else if(resultOfLastPlay === gameActionCheck.actionDrawTwo) {
       console.log("gameRoom checkResultOfLastMove in actionDrawTwo");
-      this.getCurrentPlayer().receiveCards(this.gameBoard.getKCardsFromDrawCards(2));
+      this.getCurrentPlayer().receiveCards(this.gameBoard.getNewCardsToDraw(2));
       this.unoMoveChecker.resetMoveResult();
     }
     else if(resultOfLastPlay === gameActionCheck.actionSkipTurn ) {
@@ -150,7 +150,7 @@ module.exports = class gameRoom {
   }
 
   drawPlayerCards(numOfCards=1) {
-    return this.gameBoard.getKCardsFromDrawCards(numOfCards);
+    return this.gameBoard.getNewCardsToDraw(numOfCards);
   }
 
   static get MAX_NUM_PLAYERS() {
@@ -202,11 +202,11 @@ module.exports = class gameRoom {
 
   //FOR SERVER INTERACTION
   getDrawDeckCards() {
-    return this.gameBoard.getDrawDeckCards();
+    return this.gameBoard.getDrawnCards();
   }
 
   getPlayedDeckCards() {
-    return this.gameBoard.getPlayedDeckCards();
+    return this.gameBoard.getPlayedCards();
   }
 
   getPlayerHands(nPlayerName) {
@@ -219,7 +219,7 @@ module.exports = class gameRoom {
   }
 
   getCurrentTopCardAttributes() {
-    return this.gameBoard.getTopPlayedCardsAttribute();
+    return this.gameBoard.getMostPlayedCard();
   }
 
   getPlayers() {
@@ -238,7 +238,7 @@ module.exports = class gameRoom {
     }
 
     try {
-      this.getCurrentPlayer().receiveCards(this.gameBoard.getKCardsFromDrawCards(1));
+      this.getCurrentPlayer().receiveCards(this.gameBoard.getNewCardsToDraw(1));
     }
     catch (err) {
       console.log("Could not draw card " + err);
@@ -262,7 +262,7 @@ module.exports = class gameRoom {
         this.getCurrentPlayer().receiveCards([cardToPlay]);
         return result;
       }
-      this.gameBoard.putCardToPlayedCards(cardToPlay);
+      this.gameBoard.playedCardsDeck(cardToPlay);
       if(this.gameActionCheck.moveResult === gameActionCheck.actionReverseDirection) { //move result
         this.directionOfPlay = !this.directionOfPlay;
         this.unoMoveChecker.resetMoveResult();
@@ -297,7 +297,7 @@ module.exports = class gameRoom {
   }
 
   getLastCardPlayed() {
-    return this.gameBoard.getTopPlayedCardsAttribute()[gamecards.cardColor];
+    return this.gameBoard.getMostPlayedCard()[gamecards.cardColor];
   }
 
   getCurrentPlayerCardCount(){
