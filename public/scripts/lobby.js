@@ -44,4 +44,17 @@ const socket = io.connect();
 			alert("error with joining game");
 		}
 	})
+
+	function createGame(events) {
+		let roomname = prompt("Please enter the room name", "");
+		socket.emit('create game request', roomname);
+	}
+
+	socket.on('create game response', data => {
+		if (data.result == true){
+			window.location.replace('/game?id='+data.gameid);
+		}else{
+			alert("error could not create game");
+		}
+	})
 })();
