@@ -15,40 +15,37 @@
     <script src="../../socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
   </head>
-  <body>
-    <ul id="messages"></ul>
-    <form action="/" method="POST" id="chatForm">
-      <input id="txt" autocomplete="off" autofocus="on" placeholder="type your message here..." />
-      <button>Send</button>
-    </form>
-    <!-- <script>
-        // submit text message without reload/refresh the page
-        $('form').submit(function(e){
-            e.preventDefault(); // prevents page reloading
-            $('#txt').val('');
-            return false;
-        });
-    </script> -->
-    <script>
-            var socket = io.connect('http://localhost:3000');
+<body>
+<div class="container">
+    <div class="split left">
+        <h1 class="my-4 text-center text-lg-left">Current Games</h1>
+        </br>
+        <div class="current_games"></div>
+    </div>
+    <div class="split right">
+        <h1 class="my-4 text-center text-lg-left">Chat</h1>
+        <ul id="messages"></ul>
+        <form action="">
+            <input id="text" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    var socket = io.connect('http://localhost:8080');
             // submit text message without reload/refresh the page
-            $('form').submit(function(e){
-                e.preventDefault(); // prevents page reloading
-                socket.emit('chat_message', $('#txt').val());
-                $('#txt').val('');
+            $('form').submit(function(event){
+                event.preventDefault(); // prevents page reloading
+                socket.emit('chat message', {text:$('#text').val(),socketid:socket.id);
+                $('#text').val('');
                 return false;
             });
             // append the chat text message
             socket.on('chat_message', function(msg){
-                $('#messages').append($('<li>').html(msg));
+                $('#messages').append($('<li>').text(msg.username+": "+msg.message));
             });
-            // append text if someone is online
-            socket.on('is_online', function(username) {
-                $('#messages').append($('<li>').html(username));
-            });
-            // ask username
-            var username = prompt('Please tell me your name');
-            socket.emit('username', username);
-    </script>
-  </body>
+</script>
+<script src="/javascripts/lobby_actions.js"></script>
+</body>
 </html>
