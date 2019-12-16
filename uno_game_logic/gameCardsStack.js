@@ -3,12 +3,12 @@ module.exports =  class gameCardsStack {
       this.deckArray = [];
     }
   
-    getNumOfCardsLeft() { //Look for these functions elsewhere
+    getCardsStillInDeck() { //Look for these functions elsewhere
       return this.deckArray.length;
     }
   
     //Cards on top of the deck display the logo, while the bottom displays the card attributes.
-    getKCardsFromDeck(n, cardsOnTop = true) {
+    getNCards (n, cardsOnTop = true) {
       if(n > this.deckArray.length) {
         throw("Could not draw cards; the deck is empty");
       }

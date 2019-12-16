@@ -23,7 +23,7 @@ module.exports = class gameDeck extends pileOfGameCards { //Don't have the exten
     constructor() {
       super();
       this.createGameDeck();
-      this.shuffleGameDeck();
+      this.shuffleCardsInDeck();
     }
 
     createGameDeck() {
@@ -94,7 +94,7 @@ module.exports = class gameDeck extends pileOfGameCards { //Don't have the exten
 }
 
 //Shuffling the game deck
-shuffleGameDeck() {
+shuffleCardsInDeck() {
   let currentCardIndex = this.deckArray.length, temporaryCardPosition, randomCardIndex; //Check where deckArray comes from 
 
   //While elements are not all shuffled

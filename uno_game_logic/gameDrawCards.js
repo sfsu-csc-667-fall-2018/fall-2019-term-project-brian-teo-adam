@@ -1,21 +1,20 @@
-/*
-//Not using this yet, double check back later.
-let UnoDeck = require('./UnoDeck');
-*/
+let gamedeck = require('./gamedeck');
 
-module.exports = class gameDrawCards extends gameDeck { 
+module.exports = class gameDrawCards extends gamedeck { 
     constructor() {
         super();
         this.deckArray = [];
     }
 
-    getNFollowingCards(n) {
-        return this.getKCardsFromDeck(n); //Check on where getKCardsFromDeck comes from
+    //Getting more cards
+    getNMoreCards(n) {
+        return this.getNCards(n);
     }
 
-    buildingGameDrawCardsDeck(cardsToInsert) { //Check where cardsToInsert comes from 
-        this.insertCards(cardsToInsert, true); //Check where insertCards comes from
-        this.shuffleGameDeck(); 
+    //Creating a deck to draw new cards from
+    creatingDeckToDrawFrom(placingCards) {
+        this.placeCardsInDeck(placingCards, true); 
+        this.shuffleCardsInDeck(); 
     }
 
 }
