@@ -1,7 +1,6 @@
 if (process.env.NODE_ENV === 'development') {
     require("dotenv").config();
 }
-//consolidate for using more than one view engine
 const engines = require('consolidate');
 const createError = require('http-errors');
 const express = require('express');
@@ -14,7 +13,6 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 
 const passport = require('./auth')
-const socketIo = require('./socket')
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');

@@ -3,22 +3,21 @@ const router = express.Router();
 
 const passport = require('../auth');
 const User = require('../db/users');
-const Games = require('../db/games');
-const rooms = { };
+const { ensureAuthenticated, forwardAuthenticated } = require('../auth/middleware/auth');
 // Login Page
-router.get('/login', (request, response) =>{
+router.get('/login', forwardAuthenticated, (request, response) => {
   response.render('login')
-} );
+});
 
 // Register Page
-router.get('/register', (request, response) =>{
+router.get('/register', (request, response) => {
   response.render('register')
 });
 
-router.post('/register', (request, response) =>{
-  const {username,email,password,password2} = request.body;
+router.post('/register', (request, response) => {
+  const { username, email, password, password2 } = request.body;
   let errors = [];
-  
+
   if (!username || !email || !password) {
     errors.push({ msg: 'Please enter all fields' });
     //req.flash('error_msg', 'all fields are required')
@@ -37,7 +36,7 @@ router.post('/register', (request, response) =>{
       }
     })
     .then(() => {
-      return User.create(password,username,email);
+      return User.create(password, username, email);
     })
     .then(user => {
       request.login(request.body, error => {
@@ -49,26 +48,27 @@ router.post('/register', (request, response) =>{
         });
       });
     })
-    .catch(function(err) {
+    .catch(function (err) {
       response.json({ error: err.message });
     });
 });
 
 // Login
-router.post('/login', (request, response, next) => {
+router.post('/login', forwardAuthenticated, (request, response, next) => {
   passport.authenticate('local', {
     successRedirect: '/dashboard',
     failureRedirect: '/users/login',
     failureFlash: true
   })(request, response, next);
+
 });
 
 // Logout
 router.get('/logout', (request, response) => {
   request.logout();
- // request.flash('success_msg', 'You are logged out');
+  // request.flash('success_msg', 'You are logged out');
   response.redirect('/users/login');
 });
 
-module.exports =router;
+module.exports = router;
 
