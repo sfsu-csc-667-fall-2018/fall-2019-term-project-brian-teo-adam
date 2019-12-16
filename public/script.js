@@ -16,52 +16,46 @@ socket.emit('new-user', name)
 //   const name = prompt('What is your name?')
 //appendMessage('You joined')
 //socket.emit('new-user', roomName, name)
+createGame.addEventListener('submit', function ( event ) {
+  event.preventDefault();
+  console.log("fetch function ")
+  fetch('/room/createGame', {
+    'method': 'POST',
+    'headers': {
+      'Content-type': 'application/json'
+    },
+    'body': JSON.stringify({
+      'gameName': document.getElementById('gameName').value,
+      'numberPlayers': document.getElementById('numberPlayers').value
+    })
+  }).then(async res => {
+    console.log("res", res)
+    const data = await res.json();
+    console.log('data return', data);
+    localStorage.setItem('userId', data.userId);
+    socket.emit('new-game', request.body.room)
+    console.log('userId', data.userId);
+  });
+})
 
+socket.on('new-game', function ( message ) { 
+  const {
+    userId,
+    gameType,
+    gameId,
+  } = message;
 
-//}
+  console.log("Script message", message)
 
+  if ( userId == localStorage.getItem('userId') ) {
 
+    // open game window
 
-// createGame.addEventListener('submit', function ( event ) {
-//   event.preventDefault();
-//   console.log("fetch function ")
-//   fetch('/room/createGame', {
-//     'method': 'POST',
-//     'headers': {
-//       'Content-type': 'application/json'
-//     },
-//     'body': JSON.stringify({
-//       'gameName': document.getElementById('gameName').value,
-//       'numberPlayers': document.getElementById('numberPlayers').value
-//     })
-//   }).then(async res => {
-//     console.log("res", res)
-//     const data = await res.json();
-//     console.log('data return', data);
-//     localStorage.setItem('userId', data.userId);
-//     socket.emit('new-game', request.body.room)
-//     console.log('userId', data.userId);
-//   });
-// })
-
-// socket.on('new-game', function ( message ) { 
-//   const {
-//     userId,
-//     gameType,
-//     gameId,
-//   } = message;
-
-//   console.log("Script message", message)
-
-//   if ( userId == localStorage.getItem('userId') ) {
-
-//     // open game window
-
-//   }
-//   else {
-//      // render the game advertisement somewhere
-//   }
-// });
+  }
+  else {
+     // render the game advertisement somewhere
+  }
+});
 
 
 
