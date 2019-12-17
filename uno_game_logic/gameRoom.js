@@ -183,134 +183,132 @@ module.exports = class gameRoom {
     return playCard;
   }
 
-  getPlayerState(nPlayer, beforeTurn=true) {
-    if(beforeTurn) {
+  getStatusOfPlayer(nPlayer, activeTurn = true) {
+    if(activeTurn) {
       console.log("Before Card Was Played");
     }
     else {
       console.log("After Card Was Played");
     }
-    console.log("  " + nPlayer.name + " ");
-    let cards = "\n";
+    console.log("  " + nPlayer.username + " ");
+    let playingCards = "\n";
     let index = 0;
-    for(let card of nPlayer.myHand.deckArray) { 
-      cards += index + " " + card.typeOfCard + " " + card.valueOfCard + " " + card.colorOfCard + " \n"; 
+    for(let inGameCards of nPlayer.allCardsInHand.deckArray) { 
+      playingCards += index + " " + inGameCards.typeOfCard + " " + inGameCards.valueOfCard + " " + inGameCards.colorOfCard + " \n"; 
       index++;
     }
-    console.log(cards);
+    console.log(playingCards);
   }
 
-  showPlayerScores(playerScore) {
+  pointsOfLobby(playerScore) {
     for(let score of playerScore) {
-      console.log("Player " + score.name + " Score: " + score.myScore); //Look for name and myScore
+      console.log("Player: " + score.username + " Points: " + score.playerScore);
     }
   }
 
-  //FOR SERVER INTERACTION
-  getDrawDeckCards() {
+  getDrawnCards() {
     return this.gameboard.getDrawnCards();
   }
 
-  getPlayedDeckCards() {
+  getPlayedCards() {
     return this.gameboard.getPlayedCards();
   }
 
-  getPlayerHands(nPlayerName) {
+  getAllHandsInGame(playerUserName) {
     for(let player of this.playerSeats.playerArray) {
-      if(player.name === nPlayerName) {
-        //console.log("GETTING CARDS FROM PLAYER: "+JSON.stringify(player))
-        return player.getCardInfo();
+      if(player.username === playerUserName) {
+        return player.getAvailableCards();
       }
     }
   }
 
-  getCurrentTopCardAttributes() {
+  getMostPlayedCardInformation() {
     return this.gameboard.getMostPlayedCard();
   }
 
-  getPlayers() {
+  getAllPlayersInGame() {
     return this.playerSeats.playerArray;
   }
 
-  getCurrentPlayerIndex() {
+  getPlayersPositionAtTable() {
     return this.playerSeatedAt;
   }
 
-  currentPlayerDrewACard() {
-    let prevResult = this.mostRecentPlayerAction();
-    console.log("DRAW CARD PREV RESULT === " + prevResult);
-    if(prevResult != gameActionCheck.actionDefault) {
+  playerDrewCard() {
+    let cardDrawnFromDeck = this.mostRecentPlayerAction();
+    console.log("Card Previously Drawn: " + cardDrawnFromDeck);
+    if(cardDrawnFromDeck != gameActionCheck.actionDefault) {
       return true;
     }
 
     try {
-      this.playerIndexAt().receiveCards(this.gameboard.getNewCardsToDraw(1));
+      this.playerIndexAt().acceptCards(this.gameboard.getNewCardsToDraw(1));
     }
-    catch (err) {
-      console.log("Could not draw card " + err);
+    catch (error) {
+      console.log("Could not draw card " + error);
       return false;
     }
     return true;
   }
 
-  currentPlayerPlayedACard(cardIndex) {
-    let prevResult = this.mostRecentPlayerAction();
+  cardBeingPlayed(playedCard) {
+    let cardPreviouslyPlayed = this.mostRecentPlayerAction();
 
-    console.log("Result of previous move " + prevResult);
-    if(prevResult != gameActionCheck.actionDefault) {
+    console.log("Result of previous move: " + cardPreviouslyPlayed);
+    if(cardPreviouslyPlayed != gameActionCheck.actionDefault) {
       return true;
     }
 
     try {
-      let cardToPlay = this.playerIndexAt().playCardMove(cardIndex);
-      let result = this.gameActionCheck.checkMoveValidity(cardToPlay);
-      if(!result) {
-        this.playerIndexAt().receiveCards([cardToPlay]);
-        return result;
+      let newCardChosen = this.playerIndexAt().actionOfPlayCard(playedCard);
+      let cardOutcome = this.gameActionCheck.acceptedAction(newCardChosen);
+      if(!cardOutcome) {
+        this.playerIndexAt().receiveCards([newCardChosen]);
+        return cardOutcome;
       }
-      this.gameboard.playedCardsDeck(cardToPlay);
-      if(this.gameActionCheck.moveResult === gameActionCheck.actionReverseDirection) { //move result
+      this.gameboard.playedCardsDeck(newCardChosen);
+      if(this.gameActionCheck.moveResult === gameActionCheck.actionReverseDirection) {
         this.gameDirection = !this.gameDirection;
-        this.gameActionCheck.resetMoveResult();
+        this.gameActionCheck.resultOfNewAction();
       }
     }
-    catch(err) {
+    catch(error) {
     
-      console.log("There has been an error... " + err);
+      console.log("There has been an error... " + error);
       return false;
     }
     return true;
   }
 
-  doesPlayerExistInGame(playerUsername) {
+  isPlayerInGame(player) {
     for(let presentPlayers of this.playerSeats.playerArray) {
-      if(playerUsername === presentPlayers.name) { //Where does name come from?
+      if(player === presentPlayers.name) { 
         return true;
       }
     }
     return false;
   }
 
-  getLastMoveResult() {
-    return this.gameActionCheck.moveResult; //Where does moveResult come from?
+  getPreviousPlayedAction() {
+    return this.gameActionCheck.actionCheck; 
   }
 
-  setWildCardColor(setColor) {
-    this.gameActionCheck.setNewColor(setColor);
-    if(this.gameActionCheck.moveResult !== this.gameActionCheck.actionWildDrawFour) { //look for moveResult
-      this.gameActionCheck.resetMoveResult();
+  setColorOfWild(setColor) {
+    this.gameActionCheck.setColorOfCard(setColor);
+    if(this.gameActionCheck.actionCheck !== this.gameActionCheck.actionWildDrawFour) { 
+      this.gameActionCheck.resultOfNewAction();
     }
   }
 
-  getLastCardPlayed() {
+  getPreviousPlayedCard() {
     return this.gameboard.getMostPlayedCard()[gamecards.cardColor];
   }
 
-  getCurrentPlayerCardCount(){
-    return this.playerIndexAt().getNumOfCardsInHand();
+  getPlayersNumberOfCards(){
+    return this.playerIndexAt().getAllHandsInGame();
   }
 
-  requestPlayerIndex(username){
-    return this.playerSeats.getPlayerIndex(username);
+  checkPlayerSeat(player){
+    return this.playerSeats.getIndexOfPlayer(player);
   }
 };
