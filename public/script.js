@@ -9,14 +9,12 @@ const lobbymessageContainer = document.getElementById('lobby-message-container')
 const lobbymessageForm = document.getElementById('lobby-send-container')
 const lobbymessageInput = document.getElementById('lobby-message-input')
 
-
-
 socket.emit('new-user', name)
 // if (lobbymessageForm != null) {
 //   const name = prompt('What is your name?')
 //appendMessage('You joined')
 //socket.emit('new-user', roomName, name)
-createGame.addEventListener('submit', function ( event ) {
+createGame.addEventListener('submit', function (event) {
   event.preventDefault();
   console.log("fetch function ")
   fetch('/room/createGame', {
@@ -38,7 +36,7 @@ createGame.addEventListener('submit', function ( event ) {
   });
 })
 
-socket.on('new-game', function ( message ) { 
+socket.on('new-game', function (message) {
   const {
     userId,
     gameType,
@@ -47,32 +45,30 @@ socket.on('new-game', function ( message ) {
 
   console.log("Script message", message)
 
-  if ( userId == localStorage.getItem('userId') ) {
+  if (userId == localStorage.getItem('userId')) {
 
     // open game window
 
   }
   else {
-     // render the game advertisement somewhere
+    // render the game advertisement somewhere
   }
 });
 
+socket.on('room-created', room => {
+  const roomElement = document.createElement('div')
+  roomElement.innerText = room
+  const roomLink = document.createElement('a')
+  roomLink.href = `/${room}`
+  roomLink.innerText = 'join'
+  roomContainer.append(roomElement)
+  roomContainer.append(roomLink)
+})
 
-
-// socket.on('room-created', room => {
-//   const roomElement = document.createElement('div')
-//   roomElement.innerText = room
-//   const roomLink = document.createElement('a')
-//   roomLink.href = `/${room}`
-//   roomLink.innerText = 'join'
-//   roomContainer.append(roomElement)
-//   roomContainer.append(roomLink)
-// })
-
-// socket.on('lobby-chat-message', data => {
-//   console.log(data)
-//   //appendMessage(`${data.name}: ${data.message}`)
-// })
+socket.on('lobby-chat-message', data => {
+  console.log(data)
+  //appendMessage(`${data.name}: ${data.message}`)
+})
 
 socket.on('chat-message', data => {
   appendMessage(`${data.name}: ${data.message}`)

@@ -9,7 +9,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  User.findById(id).then(({ id, email, username }) => done(null, { id, email, username}));
+  User.findById(id).then(({ id, email, username }) => done(null, { id, email, username }));
 });
 
 const strategy = new LocalStrategy(
@@ -17,7 +17,7 @@ const strategy = new LocalStrategy(
   (email, password, done) => {
     User.findByEmail(email.toLowerCase()).then(([user, ..._]) => {
       if (user !== undefined && bcrypt.compareSync(password, user.password)) {
-        return done(null, { id: user.id, email: user.email, username: user.username});
+        return done(null, { id: user.id, email: user.email, username: user.username });
       } else {
         return done('That user was not found.', false);
       }

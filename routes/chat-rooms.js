@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const Games = require('../db/index')
 
-
-const Games = require('../db/games')
 const rooms = {}
-
 
 router.post('/room', (req, res) => {
   if (rooms[req.body.room] != null) {
@@ -16,19 +14,14 @@ router.post('/room', (req, res) => {
 
 })
 
-router.get('/', (req, res) => {
-  res.render('');
-})
-
 router.get('/:room', (req, res) => {
   console.log("Room name ", req.params.room)
-  // if (rooms[req.params.room] == null) {
-  //   return res.redirect('/')
-  // }
+  if (rooms[req.params.room] == null) {
+    return res.redirect('/')
+  }
   console.log("Room ", req.params.room)
   //change req.params.room to get game id
-  res.render('currentGame')
-
+  res.render('currentGame', {roomName:req.params.room})
 })
 
 router.get('/currentGame', (req, res) => {
